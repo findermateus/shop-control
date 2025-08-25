@@ -1,0 +1,60 @@
+services:
+    db:
+        image: mysql
+        container_name: mysql
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+            - MYSQL_DATABASE=${DB_DATABASE}
+            - MYSQL_USER=${DB_USER}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+        networks:
+            - internal
+    nginx:
+        build:
+            context: .
+            dockerfile: docker/nginx/Dockerfile
+        container_name: nginx
+        ports:
+            - "8080:80"
+        networks:
+            - internal
+        volumes:
+            - .:/var/www/html
+    php-fpm:
+        build:
+            context: .
+            dockerfile: docker/development/fpm/Dockerfile
+            args:
+                UID: ${UID:-1000}
+                GID: ${GID:-1000}
+        container_name: php-fpm
+        networks:
+            - internal
+        volumes:
+            - .:/var/www/html
+    workspace:
+        container_name: workspace
+        build:
+            context: .
+            dockerfile: ./docker/development/workspace/Dockerfile
+            args:
+                UID: ${UID:-1000}
+                GID: ${GID:-1000}
+                XDEBUG_ENABLED: ${XDEBUG_ENABLED:-true}
+                XDEBUG_MODE: develop,coverage,debug,profile
+                XDEBUG_HOST: ${XDEBUG_HOST:-host.docker.internal}
+                XDEBUG_IDE_KEY: ${XDEBUG_IDE_KEY:-DOCKER}
+                XDEBUG_LOG: /dev/stdout
+                XDEBUG_LOG_LEVEL: 0
+        tty: true
+        stdin_open: true
+        env_file:
+            - .env
+        volumes:
+            - ./:/var/www
+        networks:
+            - internal
+networks:
+    internal:
+        driver: bridge
