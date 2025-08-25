@@ -8,6 +8,9 @@ services:
             - MYSQL_DATABASE=${DB_DATABASE}
             - MYSQL_USER=${DB_USER}
             - MYSQL_PASSWORD=${DB_PASSWORD}
+        #retirar quando for colocar em PROD
+        ports:
+            - "3306:3306"
         networks:
             - internal
     nginx:
