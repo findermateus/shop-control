@@ -15,7 +15,7 @@ class ManagerController extends Controller
         $manager = Manager::where('login', $request->login)->first();
         if (! $manager || ! Hash::check($request->password, $manager->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'error' => ['The provided credentials are incorrect.'],
             ]);
         }
         return [
