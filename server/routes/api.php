@@ -1,17 +1,17 @@
 <?php
 
-use App\Models\User;
+use App\Http\Controllers\ManagerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::get('/', function (Request $request) {
-    $user = new User();
-    $user->createToken('user-token');
-    return 'E-commerce Equina Geek API';
+Route::post('/getHashedPassword', function (Request $request) {
+    return bcrypt($request->password);
 });
 
-Route::get('/auth', fn(Request $request) => 'authenticated')->middleware('auth:sanctum');
+Route::post('/auth', [ManagerController::class, 'authenticate']);
+
+Route::get('/test', function () {
+    return [
+        'authenticated' => true
+    ];
+})->middleware(['auth:manager']);
