@@ -1,17 +1,22 @@
 <?php
 
-use App\Models\User;
+use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::get('/', function (Request $request) {
-    $user = new User();
-    $user->createToken('user-token');
-    return 'E-commerce Equina Geek API';
+Route::post('/password', function (Request $request) {
+    return bcrypt($request->password);
 });
 
-Route::get('/auth', fn(Request $request) => 'authenticated')->middleware('auth:sanctum');
+Route::post('/auth', [ManagerController::class, 'authenticate']);
+
+Route::middleware('auth:manager')->prefix('/products')->group(function () {
+    Route::post('', [ProductController::class, 'createProduct']);
+    Route::put('/{id}', [ProductController::class, 'updateProduct']);
+    Route::get('', [ProductController::class, 'getProducts']);
+    Route::get('/{id}', [ProductController::class, 'getProductById']);
+    Route::patch('/{id}/disable', [ProductController::class, 'disableProduct']);
+    Route::patch('/{id}/enable', [ProductController::class, 'enableProduct']);
+    Route::patch('{id}/price', [ProductController::class, 'updateProductPrice']);
+});
