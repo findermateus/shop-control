@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginManagerRequest;
 use App\Models\Manager;
-use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -21,5 +21,10 @@ class ManagerController extends Controller
         return [
             'token' => $manager->createToken('manager')->plainTextToken
         ];
+    }
+
+    public function getUser(Request $request)
+    {
+        return $request->user('manager');
     }
 }
