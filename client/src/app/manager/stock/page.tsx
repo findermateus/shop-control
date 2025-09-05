@@ -1,10 +1,7 @@
+import StockPage from "@/components/shared/stock/stock-page";
 import { fetchProducts } from "@/lib/products";
 
 export default async function Page() {
     const products = await fetchProducts();
-    return (
-        <div>
-            Estoque
-        </div>
-    );
+    return <StockPage products={products} />;
 }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
     Sidebar,
@@ -6,9 +6,10 @@ import {
     SidebarFooter,
     SidebarGroup,
     SidebarHeader,
-} from "@/components/ui/sidebar"
-import { SidebarItem } from "./side-bar-item"
-import { LayoutDashboard, Package, ShoppingCart } from "lucide-react"
+} from "@/components/ui/sidebar";
+import { SidebarItem } from "./side-bar-item";
+import { LayoutDashboard, LogOut, Package, ShoppingCart } from "lucide-react";
+import { Button } from "../ui/button";
 
 export function AppSidebar() {
     return (
@@ -41,7 +42,16 @@ export function AppSidebar() {
                 </nav>
                 <SidebarGroup />
             </SidebarContent>
-            <SidebarFooter />
+            <SidebarFooter>
+                <Button
+                    variant="outline"
+                    className="w-full gap-2 bg-transparent"
+                    onClick={() => {}}
+                >
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                </Button>
+            </SidebarFooter>
         </Sidebar>
-    )
+    );
 }
