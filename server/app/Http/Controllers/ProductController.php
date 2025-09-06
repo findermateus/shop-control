@@ -62,15 +62,7 @@ class ProductController extends Controller
         if (! $product) {
             throw new ProductNotFoundException();
         }
-        $cleanProduct = $product->toArray();
-        $priceHistories = PriceHistory::where('product_id', $id)->get()->map(function ($history) {
-            return [
-                'price' => $history->price,
-                'changedAt' => $history->created_at
-            ];
-        });
-        $cleanProduct['priceHistory'] = $priceHistories;
-        return response()->json($cleanProduct);
+        return response()->json($product);
     }
 
     public function disableProduct(int $id)

@@ -1,13 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import {
     Table,
     TableBody,
@@ -18,10 +9,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/hooks/use-currency";
-import { ChartNoAxesCombined } from "lucide-react";
+import StockPriceHistoryDialog from "./stock-price-history-dialog";
+import { Product } from "@/lib/types/stock";
 
 interface StockProductsTableProps {
-    readonly products: Array<any>;
+    readonly products: Array<Product>;
     readonly categories: Array<{ value: string; label: string }>;
 }
 
@@ -61,7 +53,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                             {getCategoryLabel(product.category)}
                         </TableCell>
                         <TableCell>
-                            <StockBadge stock={product.stock} />
+                            <StockBadge stock={getStock(product)} />
                         </TableCell>
                         <TableCell>
                             <Badge
@@ -79,23 +71,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                             {formatCurrency(Number(product.price))}
                         </TableCell>
                         <TableCell className="flex justify-center">
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline">
-                                        <ChartNoAxesCombined />
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            Histórico de preços
-                                        </DialogTitle>
-                                        <DialogDescription>
-                                            Histórico de preços
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
+                            <StockPriceHistoryDialog product={product} />
                         </TableCell>
                         <TableCell>Ações</TableCell>
                     </TableRow>
@@ -103,6 +79,16 @@ export default function StockProductsTable(props: StockProductsTableProps) {
             </TableBody>
         </Table>
     );
+}
+
+const getStock = (product: any) => {
+    if (product.category === "Clothing") {
+        return product.clothesVariants.reduce(
+            (sum: any, variant: any) => sum + variant.stock,
+            0
+        );
+    }
+    return product.stock;
 }
 
 const StockBadge = ({ stock }: { stock: number }) => {

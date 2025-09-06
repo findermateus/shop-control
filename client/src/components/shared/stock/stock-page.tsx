@@ -13,9 +13,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import StockProductsTable from "./stock-products-table";
+import { Product } from "@/lib/types/stock";
 
 interface StockPageProps {
-    readonly products: Array<any>;
+    readonly products: Array<Product>;
 }
 
 export default function StockPage(props: StockPageProps) {
@@ -29,12 +30,32 @@ export default function StockPage(props: StockPageProps) {
         { value: "Clothing", label: "Roupas" },
     ];
 
-    const productCount = products.length;
-    const lowOnStockCount = products.filter((p) => p.stock < 5).length;
-    const outOfStockCount = products.filter((p) => p.stock === 0).length;
-    const totalValue = products.reduce((acc, product) => {
-        return acc + product.price * product.stock;
-    }, 0);
+
+    let lowOnStockCount = 0;
+    let outOfStockCount = 0;
+    let totalValue = 0;
+    let productCount = 0;
+
+    products.forEach((product) => {
+        let currentStock = 0;
+
+        if (product.category === 'Clothing') {
+            currentStock = product.clothesVariants?.reduce((sum: any, variant: any) => sum + variant.stock, 0) ?? 0;
+        } else {
+            currentStock = product.stock ?? 0;
+        }
+
+        if (currentStock > 0 && currentStock < 5) {
+            lowOnStockCount++;
+        }
+
+        if (currentStock === 0) {
+            outOfStockCount++;
+        }
+
+        totalValue += product.price * currentStock;
+    });
+
     return (
         <div>
             <ManagerPageTitle

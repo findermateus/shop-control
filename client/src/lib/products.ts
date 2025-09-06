@@ -1,7 +1,8 @@
 import { getAuthorizationToken } from "./auth.server";
+import { Product } from "./types/stock";
 import { getServerUrl } from "./utils";
 
-export async function fetchProducts() {
+export async function fetchProducts(): Promise<Array<Product>> {
     const token = await getAuthorizationToken();
     const url = getServerUrl() + '/products';
     try {

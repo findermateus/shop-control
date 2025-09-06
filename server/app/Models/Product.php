@@ -22,6 +22,11 @@ class Product extends Model
         return $this->hasMany(ClothingVariant::class);
     }
 
+    public function priceHistories()
+    {
+        return $this->hasMany(PriceHistory::class);
+    }
+
     public function toArray(): array
     {
         $result = [
@@ -34,6 +39,7 @@ class Product extends Model
             'stock' => $this->stock,
             'active' => $this->active,
             'createdAt' => $this->created_at,
+            'priceHistories' => $this->priceHistories
         ];
         if ($this->category == 'Clothing') {
             $result['clothesVariants'] = $this->clothesVariants;
