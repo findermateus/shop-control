@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\ClothingSize;
 use App\Exceptions\ProductNotFoundException;
 use App\Http\Requests\ChangeProductPriceRequest;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\ClothingVariant;
 use App\Models\PriceHistory;
 use App\Models\Product;
 
@@ -15,11 +17,26 @@ class ProductController extends Controller
     {
         $data = $request->validated();
         $product = Product::create($data);
+        $category = $data['category'];
+        if ($category == 'Clothing') {
+            $this->createClothingVariants($product->id);
+        }
         PriceHistory::create([
             'product_id' => $product->id,
             'price' => $product->price
         ]);
         return response()->json(['message' => 'Product created successfully'], 201);
+    }
+
+    private function createClothingVariants(int $productId): void
+    {
+        foreach (ClothingSize::cases() as $size) {
+            ClothingVariant::create([
+                'product_id' => $productId,
+                'size' => $size,
+                'stock' => 0,
+            ]);
+        }
     }
 
     public function updateProduct(int $id, UpdateProductRequest $request)
@@ -36,7 +53,7 @@ class ProductController extends Controller
     public function getProducts()
     {
         $products = Product::all();
-        return response()->json($products->map->toArray());
+        return response()->json($products);
     }
 
     public function getProductById(int $id)
