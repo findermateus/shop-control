@@ -20,5 +20,5 @@ Route::middleware('auth:manager')->prefix('/products')->group(function () {
     Route::get('/{id}', [ProductController::class, 'getProductById']);
     Route::patch('/{id}/disable', [ProductController::class, 'disableProduct']);
     Route::patch('/{id}/enable', [ProductController::class, 'enableProduct']);
-    Route::patch('{id}/price', [ProductController::class, 'updateProductPrice']);
+    Route::patch('/{id}/price', [ProductController::class, 'updateProductPrice']);
 });

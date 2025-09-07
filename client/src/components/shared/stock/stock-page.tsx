@@ -3,7 +3,7 @@
 import ManagerPageTitle from "@/components/shared/manager-page-title";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Filter, Search } from "lucide-react";
+import { Filter, Plus, Search } from "lucide-react";
 import StockDashboard from "./stock-dashboard";
 import {
     Select,
@@ -15,6 +15,8 @@ import {
 import StockProductsTable from "./stock-products-table";
 import { Product } from "@/lib/types/stock";
 import { useEffect, useState } from "react";
+import StockCreateProduct from "./stock-create-product";
+import { Button } from "@/components/ui/button";
 
 interface StockPageProps {
     readonly products: Array<Product>;
@@ -97,7 +99,10 @@ export default function StockPage(props: StockPageProps) {
             />
             <Card className="mt-8 p-5">
                 <div className="flex flex-col gap-5">
-                    <FilterTitle />
+                    <div className="flex items-center justify-between">
+                        <FilterTitle />
+                        <StockCreateProduct trigger={<Button><Plus /> Novo Produto</Button>} />
+                    </div>
                     <div className="flex gap-4">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />

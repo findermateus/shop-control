@@ -16,6 +16,9 @@ class ProductController extends Controller
     public function createProduct(CreateProductRequest $request)
     {
         $data = $request->validated();
+        if ($data['category'] != 'Clothing') {
+            $data['stock'] = 0;
+        }
         $product = Product::create($data);
         $category = $data['category'];
         if ($category == 'Clothing') {

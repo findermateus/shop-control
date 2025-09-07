@@ -14,6 +14,9 @@ import { Product } from "@/lib/types/stock";
 import StockUpdateProduct from "./stock-update-product";
 import { Button } from "@/components/ui/button";
 import { Power } from "lucide-react";
+import { toast } from "sonner";
+import { useLoading } from "@/providers/LoadingProvider";
+import { useRouter } from "next/navigation";
 
 interface StockProductsTableProps {
     readonly products: Array<Product>;
@@ -22,11 +25,35 @@ interface StockProductsTableProps {
 
 export default function StockProductsTable(props: StockProductsTableProps) {
     const { products, categories } = props;
+    const { setLoading } = useLoading();
+    const router = useRouter();
 
     const getCategoryLabel = (value: string) => {
         const category = categories.find((cat) => cat.value === value);
         return category ? category.label : value;
     };
+
+    const handleToggleActive = async (product: Product) => {
+        setLoading(true);
+        const endpoint = product.active ? 'disable' : 'enable';
+        try {
+            const response = await fetch(`/api/products/${product.id}/${endpoint}`, {
+                method: 'PATCH',
+            });
+            if (!response.ok) {
+                toast.error('Falha ao alterar status do produto');
+                console.error('Failed to toggle product status');
+                return;
+            }
+            toast.success(`Produto ${product.active ? 'inativado' : 'ativado'} com sucesso!`);
+            router.refresh();
+        } catch (error) {
+            console.error('Error toggling product status:', error);
+            toast.error('Erro ao alterar status do produto');
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
         <Table>
@@ -78,7 +105,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                         </TableCell>
                         <TableCell>
                             <StockUpdateProduct product={product} />
-                            <Button variant="outline" title={product.active ? "Inativar" : "Ativar"}>
+                            <Button onClick={() => handleToggleActive(product)} className="ml-1" variant="outline" title={product.active ? "Inativar" : "Ativar"}>
                                 <Power color={product.active ? "red" : "green"} />
                             </Button>
                         </TableCell>

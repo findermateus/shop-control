@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import Modal from "@/components/ui/modal";
 import { Product } from "@/lib/types/stock";
 import { SquarePen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface StockUpdateProductProps {
     product: Product;
@@ -31,7 +31,6 @@ const UpdateProductContent = (props: UpdateProductContentProps) => {
     const [newDescription, setNewDescription] = useState(description || "");
     const [newPrice, setNewPrice] = useState(price || 0);
     const priceIsDifferent = Number(price) !== Number(newPrice);
-
 
     return <div className="grid w-full max-w-sm items-center gap-3">
         <Label htmlFor="name">Nome</Label>
