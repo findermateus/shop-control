@@ -14,12 +14,39 @@ import {
 } from "@/components/ui/select";
 import StockProductsTable from "./stock-products-table";
 import { Product } from "@/lib/types/stock";
+import { useEffect, useState } from "react";
 
 interface StockPageProps {
     readonly products: Array<Product>;
 }
 
 export default function StockPage(props: StockPageProps) {
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>(props.products);
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const [selectedStatus, setSelectedStatus] = useState<string>("");
+
+    useEffect(() => {
+        let filtered = props.products;
+        if (searchTerm) {
+            filtered = filtered.filter((product) =>
+                product.label.toLowerCase().includes(searchTerm.toLowerCase())
+                || product.id.toString() === searchTerm
+                || product.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+        if (selectedCategory) {
+            filtered = filtered.filter((product) => product.category === selectedCategory);
+        }
+        if (selectedStatus != '') {
+            const isActive = selectedStatus === 'active';
+            filtered = filtered.filter((product) => {
+                return Boolean(product.active) === isActive
+            });
+        }
+        setFilteredProducts(filtered);
+    }, [searchTerm, selectedCategory, selectedStatus, props.products]);
+
     const { products } = props;
     const categories = [
         { value: "Accessories", label: "Acessórios" },
@@ -76,12 +103,12 @@ export default function StockPage(props: StockPageProps) {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por nome ou ID"
-                                value={""}
-                                onChange={(e) => 1}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pl-10"
                             />
                         </div>
-                        <Select>
+                        <Select onValueChange={(value) => setSelectedCategory(value)}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Categoria" />
                             </SelectTrigger>
@@ -96,7 +123,7 @@ export default function StockPage(props: StockPageProps) {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <Select>
+                        <Select onValueChange={(value) => setSelectedStatus(value)}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Status" />
                             </SelectTrigger>
@@ -110,7 +137,7 @@ export default function StockPage(props: StockPageProps) {
                     </div>
                 </div>
                 <StockProductsTable
-                    products={products}
+                    products={filteredProducts}
                     categories={categories}
                 />
             </Card>

@@ -15,11 +15,6 @@ class UpdateProductRequest extends FormRequest
         return [
             'label' => ['required', 'string', 'min:1'],
             'description' => ['required', 'string', 'min:1'],
-            'category' => [
-                'required',
-                'string',
-                'in:' . implode(',', array_map(fn($c) => $c->name, Category::cases()))
-            ]
         ];
     }
 }

@@ -11,6 +11,9 @@ import {
 import { formatCurrency } from "@/hooks/use-currency";
 import StockPriceHistoryDialog from "./stock-price-history-dialog";
 import { Product } from "@/lib/types/stock";
+import StockUpdateProduct from "./stock-update-product";
+import { Button } from "@/components/ui/button";
+import { Power } from "lucide-react";
 
 interface StockProductsTableProps {
     readonly products: Array<Product>;
@@ -73,11 +76,16 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                         <TableCell className="flex justify-center">
                             <StockPriceHistoryDialog product={product} />
                         </TableCell>
-                        <TableCell>Ações</TableCell>
+                        <TableCell>
+                            <StockUpdateProduct product={product} />
+                            <Button variant="outline" title={product.active ? "Inativar" : "Ativar"}>
+                                <Power color={product.active ? "red" : "green"} />
+                            </Button>
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
-        </Table>
+        </Table >
     );
 }
 

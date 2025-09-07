@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import Modal from "@/components/ui/modal";
 import { formatCurrency } from "@/hooks/use-currency";
 import { Product } from "@/lib/types/stock";
 import { ChartNoAxesCombined } from "lucide-react";
@@ -12,35 +13,24 @@ export default function StockPriceHistoryDialog(props: StockPriceHistoryDialog) 
     const product = props.product;
     const priceHistories = product.priceHistories.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="outline">
-                    <ChartNoAxesCombined />
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>
-                        Histórico de preços - {product.label}
-                    </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {priceHistories.map((price, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-medium">
-                                        {formatCurrency(Number(price.price))}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                {price.date}
+        <Modal trigger={<Button variant="outline"><ChartNoAxesCombined /></Button>}
+            title={`Histórico de preços - ${product.label}`}
+            dialogContent={
+                priceHistories.map((price, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium">
+                                    {formatCurrency(Number(price.price))}
+                                </span>
                             </div>
                         </div>
-                    ))}
-                </div>
-            </DialogContent>
-        </Dialog >
+                        <div className="text-sm text-muted-foreground">
+                            {price.date}
+                        </div>
+                    </div>
+                ))
+            }
+        />
     )
 }
