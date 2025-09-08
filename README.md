@@ -1,6 +1,6 @@
 # E-commerce Esquina Geek
 
-# Jira
+# Jira - Alterado
 
 Acesse o [Jira](https://e-commerce-esquina-geek.atlassian.net/jira/software/projects/DEV/boards/1) para acompanhar a atribuição e execução das atividades, bem como consultar as especificações funcionais e não funcionais do sistema.
 
