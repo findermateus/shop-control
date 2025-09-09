@@ -5,7 +5,7 @@
 Acesse o [Jira](https://e-commerce-esquina-geek.atlassian.net/jira/software/projects/DEV/boards/1) para acompanhar a atribuição e execução das atividades, bem como consultar as especificações funcionais e não funcionais do sistema.
 
 # Modelos
-
+alterado
 https://app.eraser.io/workspace/87qqIlFRlymQq7XefaMo
 
 # WireFrame
