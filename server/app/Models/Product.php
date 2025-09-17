@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\Category;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -16,9 +17,19 @@ class Product extends Model
         'active'
     ];
 
+    public function clothesVariants()
+    {
+        return $this->hasMany(ClothingVariant::class);
+    }
+
+    public function priceHistories()
+    {
+        return $this->hasMany(PriceHistory::class);
+    }
+
     public function toArray(): array
     {
-        return [
+        $result = [
             'id' => $this->id,
             'label' => $this->label,
             'description' => $this->description,
@@ -27,7 +38,12 @@ class Product extends Model
             'discount' => $this->discount,
             'stock' => $this->stock,
             'active' => $this->active,
-            'createdAt' => $this->created_at
+            'createdAt' => $this->created_at,
+            'priceHistories' => $this->priceHistories
         ];
+        if ($this->category == 'Clothing') {
+            $result['clothesVariants'] = $this->clothesVariants;
+        }
+        return $result;
     }
 }
