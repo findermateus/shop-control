@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
   }
 
   if (req.nextUrl.pathname === '/login' && await verifyToken(token || '')) {
-    const managerUrl = new URL('/manager', req.url);
+    const managerUrl = new URL('/manager/stock', req.url);
     return NextResponse.redirect(managerUrl);
   }
 

@@ -28,7 +28,7 @@ export default function Page() {
             return;
         }
         toast.success('Login realizado com sucesso!');
-        router.push('/manager');
+        router.push('/manager/stock');
     }
     return (
         <div className="flex items-center justify-center h-screen bg-gray-100">
