@@ -3,16 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-class MercadoPagoController extends Controller
-{
-    //
-}
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
 

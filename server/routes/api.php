@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\MercadoPagoController; // Adicionado
+use App\Http\Controllers\MercadoPagoController; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
