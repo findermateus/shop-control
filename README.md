@@ -42,7 +42,7 @@ Este guia detalha os passos necessários para configurar e executar o ambiente d
 Antes de começar, garanta que você tenha as seguintes ferramentas instaladas em sua máquina:
 * [Docker](https://www.docker.com/get-started) e [Docker Compose](https://docs.docker.com/compose/install/)
 * [Node.js](https://nodejs.org/en/) (versão 18 ou superior)
-* [NPM](https://www.npmjs.com/) ou [Yarn](https://yarnpkg.com/)
+* [NPM](https://www.npmjs.com/)
 
 ---
 
@@ -103,15 +103,11 @@ O frontend é uma aplicação Next.js.
 3.  **Instale as dependências do projeto:**
     ```bash
     npm install
-    # ou, se você usa Yarn:
-    # yarn install
     ```
 
 4.  **Inicie o servidor de desenvolvimento:**
     ```bash
     npm run dev
-    # ou, se você usa Yarn:
-    # yarn dev
     ```
 
 **Pronto!** A aplicação frontend estará acessível em `http://localhost:3000`.
