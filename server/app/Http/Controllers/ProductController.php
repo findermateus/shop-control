@@ -109,7 +109,8 @@ class ProductController extends Controller
         }
         $data = $request->validated();
         $value = $data['value'];
-        if (is_numeric($data['clothingVariantId'])) {
+        $clothingVariantId = $data['clothingVariantId'] ?? null;
+        if (is_numeric($clothingVariantId)) {
             $variant = $product->clothesVariants()->where('id', $data['clothingVariantId'])->firstOrFail();
             $variant->stock += $value;
             $variant->save();

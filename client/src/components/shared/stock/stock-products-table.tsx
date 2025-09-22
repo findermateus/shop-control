@@ -1,22 +1,16 @@
-import { Badge } from "@/components/ui/badge";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { formatCurrency } from "@/hooks/use-currency";
+import {Badge} from "@/components/ui/badge";
+import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {formatCurrency} from "@/hooks/use-currency";
 import StockPriceHistoryDialog from "./stock-price-history-dialog";
-import { Product } from "@/lib/types/stock";
+import {Product} from "@/lib/types/stock";
 import StockUpdateProduct from "./stock-update-product";
-import { Button } from "@/components/ui/button";
-import { Power } from "lucide-react";
-import { toast } from "sonner";
-import { useLoading } from "@/providers/LoadingProvider";
-import { useRouter } from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Power} from "lucide-react";
+import {toast} from "sonner";
+import {useLoading} from "@/providers/LoadingProvider";
+import {useRouter} from "next/navigation";
+import Tooltipable from "@/components/global/tooltipable";
+import StockHistoryDialog from "@/components/shared/stock/stock-history-dialog";
 
 interface StockProductsTableProps {
     readonly products: Array<Product>;
@@ -24,8 +18,8 @@ interface StockProductsTableProps {
 }
 
 export default function StockProductsTable(props: StockProductsTableProps) {
-    const { products, categories } = props;
-    const { setLoading } = useLoading();
+    const {products, categories} = props;
+    const {setLoading} = useLoading();
     const router = useRouter();
 
     const getCategoryLabel = (value: string) => {
@@ -67,7 +61,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                     <TableHead>Estoque</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Preço</TableHead>
-                    <TableHead className="text-center">Preços</TableHead>
+                    <TableHead className="text-center">Histórico</TableHead>
                     <TableHead>Ações</TableHead>
                 </TableRow>
             </TableHeader>
@@ -83,7 +77,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                             {getCategoryLabel(product.category)}
                         </TableCell>
                         <TableCell>
-                            <StockBadge stock={getStock(product)} />
+                            <StockBadge stock={getStock(product)}/>
                         </TableCell>
                         <TableCell>
                             <Badge
@@ -100,19 +94,25 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                         <TableCell>
                             {formatCurrency(Number(product.price))}
                         </TableCell>
-                        <TableCell className="flex justify-center">
-                            <StockPriceHistoryDialog product={product} />
+                        <TableCell className="flex justify-center gap-1">
+                            <Tooltipable trigger={<StockPriceHistoryDialog product={product}/>}
+                                         content={'Ver histórico de preços'}
+                            />
+                            <Tooltipable trigger={<StockHistoryDialog product={product}/>} content={'Ver histórico de estoque'}/>
                         </TableCell>
                         <TableCell>
-                            <StockUpdateProduct product={product} />
-                            <Button onClick={() => handleToggleActive(product)} className="ml-1" variant="outline" title={product.active ? "Inativar" : "Ativar"}>
-                                <Power color={product.active ? "red" : "green"} />
-                            </Button>
+                            <Tooltipable trigger={<StockUpdateProduct product={product}/>} content={'Alterar produto'}/>
+                            <Tooltipable trigger={
+                                <Button onClick={() => handleToggleActive(product)} className="ml-1" variant="outline"
+                                        title={product.active ? "Inativar" : "Ativar"}>
+                                    <Power color={product.active ? "red" : "green"}/>
+                                </Button>
+                            } content={product.active ? "Inativar" : "Ativar"}/>
                         </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
-        </Table >
+        </Table>
     );
 }
 
@@ -126,7 +126,7 @@ const getStock = (product: any) => {
     return product.stock;
 }
 
-const StockBadge = ({ stock }: { stock: number }) => {
+const StockBadge = ({stock}: { stock: number }) => {
     const getBadgeColor = () => {
         if (stock === 0) return "bg-red-100 text-red-800";
         if (stock < 5) return "bg-yellow-100 text-yellow-800";

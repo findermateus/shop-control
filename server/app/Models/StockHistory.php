@@ -46,6 +46,7 @@ class StockHistory extends Model
             'productId' => $this->product_id,
             'clothingVariantId' => $this->clothing_variant_id,
             'managerId' => $this->manager_id,
+            'date' => $this->created_at,
         ];
     }
 }
