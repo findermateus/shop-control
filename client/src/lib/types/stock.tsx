@@ -25,6 +25,7 @@ export type StockHistory = {
 }
 
 export type ClothesVariant = {
+    id: number;
     size: string;
     stock: number;
     stockHistories: StockHistory[];

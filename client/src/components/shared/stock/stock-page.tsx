@@ -66,7 +66,7 @@ export default function StockPage(props: StockPageProps) {
     let productCount = 0;
 
     products.forEach((product) => {
-        let currentStock = 0;
+        let currentStock;
 
         if (product.category === 'Clothing') {
             currentStock = product.clothesVariants?.reduce((sum: any, variant: any) => sum + variant.stock, 0) ?? 0;
@@ -81,7 +81,7 @@ export default function StockPage(props: StockPageProps) {
         if (currentStock === 0) {
             outOfStockCount++;
         }
-
+        productCount += currentStock;
         totalValue += product.price * currentStock;
     });
 

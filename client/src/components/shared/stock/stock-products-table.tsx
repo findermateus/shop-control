@@ -11,6 +11,7 @@ import {useLoading} from "@/providers/LoadingProvider";
 import {useRouter} from "next/navigation";
 import Tooltipable from "@/components/global/tooltipable";
 import StockHistoryDialog from "@/components/shared/stock/stock-history-dialog";
+import StockUpdateDialog from "@/components/shared/stock/stock-update-dialog";
 
 interface StockProductsTableProps {
     readonly products: Array<Product>;
@@ -62,7 +63,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                     <TableHead>Status</TableHead>
                     <TableHead>Preço</TableHead>
                     <TableHead className="text-center">Histórico</TableHead>
-                    <TableHead>Ações</TableHead>
+                    <TableHead className="text-center">Ações</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,13 +102,16 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                             <Tooltipable trigger={<span><StockHistoryDialog product={product}/></span>} content={'Ver histórico de estoque'}/>
                         </TableCell>
                         <TableCell>
+                            <div className="flex justify-center gap-1">
                             <Tooltipable trigger={<span><StockUpdateProduct product={product}/></span>} content={'Alterar produto'}/>
+                            <Tooltipable trigger={<span><StockUpdateDialog product={product} onStockUpdated={() => router.refresh()}/></span>} content={'Alterar estoque'}/>
                             <Tooltipable trigger={
                                 <Button onClick={() => handleToggleActive(product)} className="ml-1" variant="outline"
                                         title={product.active ? "Inativar" : "Ativar"}>
                                     <Power color={product.active ? "red" : "green"}/>
                                 </Button>
                             } content={product.active ? "Inativar" : "Ativar"}/>
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}
