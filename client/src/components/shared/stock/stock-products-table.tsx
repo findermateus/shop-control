@@ -95,13 +95,13 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                             {formatCurrency(Number(product.price))}
                         </TableCell>
                         <TableCell className="flex justify-center gap-1">
-                            <Tooltipable trigger={<StockPriceHistoryDialog product={product}/>}
+                            <Tooltipable trigger={<span><StockPriceHistoryDialog product={product}/></span>}
                                          content={'Ver histórico de preços'}
                             />
-                            <Tooltipable trigger={<StockHistoryDialog product={product}/>} content={'Ver histórico de estoque'}/>
+                            <Tooltipable trigger={<span><StockHistoryDialog product={product}/></span>} content={'Ver histórico de estoque'}/>
                         </TableCell>
                         <TableCell>
-                            <Tooltipable trigger={<StockUpdateProduct product={product}/>} content={'Alterar produto'}/>
+                            <Tooltipable trigger={<span><StockUpdateProduct product={product}/></span>} content={'Alterar produto'}/>
                             <Tooltipable trigger={
                                 <Button onClick={() => handleToggleActive(product)} className="ml-1" variant="outline"
                                         title={product.active ? "Inativar" : "Ativar"}>
