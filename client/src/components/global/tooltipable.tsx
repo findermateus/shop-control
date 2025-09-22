@@ -7,7 +7,7 @@ interface TooltipableProps {
 
 export default function Tooltipable({trigger, content}: TooltipableProps) {
     return <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
             {trigger}
         </TooltipTrigger>
         <TooltipContent>
