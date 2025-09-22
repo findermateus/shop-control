@@ -2,12 +2,12 @@
 
 namespace App\Enum;
 
-enum ClothingSize
+enum ClothingSize: string
 {
-    case PP;
-    case P;
-    case M;
-    case G;
-    case GG;
-    case XG;
+    case PP = 'PP';
+    case P  = 'P';
+    case M  = 'M';
+    case G  = 'G';
+    case GG = 'GG';
+    case XG = 'XG';
 }
