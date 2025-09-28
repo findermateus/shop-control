@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MercadoPagoController; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,6 @@ Route::middleware('auth:manager')->prefix('/products')->group(function () {
     Route::patch('/{id}/price', [ProductController::class, 'updateProductPrice']);
     Route::patch('/{id}/stock', [ProductController::class, 'updateProductStock']);
 });
+
+// Rota adicionada para o Mercado Pago
+Route::post('/criar-pagamento', [MercadoPagoController::class, 'criarPagamento']);
