@@ -8,6 +8,7 @@ export type Product = {
     price: number;
     clothesVariants?: ClothesVariant[];
     priceHistories: PriceHistory[];
+    stockHistories?: StockHistory[];
 }
 
 export type PriceHistory = {
@@ -15,7 +16,17 @@ export type PriceHistory = {
     price: number;
 }
 
+export type StockHistory = {
+    date: string;
+    justification: string;
+    stock: number;
+    quantityChanged: number;
+    id: number;
+}
+
 export type ClothesVariant = {
+    id: number;
     size: string;
     stock: number;
+    stockHistories: StockHistory[];
 }

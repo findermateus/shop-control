@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "./dialog";
 
 interface ModalProps {
     readonly trigger: React.ReactNode;
@@ -7,7 +7,7 @@ interface ModalProps {
 }
 
 export default function Modal(props: ModalProps) {
-    const { trigger, dialogContent, title } = props;
+    const {trigger, dialogContent, title} = props;
     return <Dialog>
         <DialogTrigger asChild>
             {trigger}
@@ -18,9 +18,7 @@ export default function Modal(props: ModalProps) {
                     {title}
                 </DialogTitle>
             </DialogHeader>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-                {dialogContent}
-            </div>
+            {dialogContent}
         </DialogContent>
-    </Dialog >
+    </Dialog>
 }
