@@ -23,16 +23,16 @@ export default function CustomerInfoCard(props: CustomerInfoCardProps) {
     };
 
     return (
-        <Card className="p-6 bg-gray-50 border-0 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+        <Card className="p-6 bg-white border border-gray-200 shadow-sm rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-gray-700">{title}</h3>
                 {icon}
             </div>
-            <div className={`text-2xl font-bold ${valueColor} mb-1`}>
+            <div className={`text-3xl font-bold ${valueColor} mb-1`}>
                 {formatValue(value)}
             </div>
             {subtitle && (
-                <p className="text-xs text-gray-500">{subtitle}</p>
+                <p className="text-sm text-gray-500">{subtitle}</p>
             )}
         </Card>
     );
