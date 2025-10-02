@@ -13,19 +13,19 @@ class CustomerController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Customer::with(['addresses']);
-        
+
         if ($request->has('email')) {
             $query->where('email', 'like', '%' . $request->get('email') . '%');
         }
-        
+
         if ($request->has('oauth_provider')) {
             $query->where('oauth_provider', $request->get('oauth_provider'));
         }
-        
+
         $customers = $query->paginate(15);
-        
+
         return response()->json([
-            'data' => $customers->items(),
+            ...$customers->items(),
             'pagination' => [
                 'current_page' => $customers->currentPage(),
                 'last_page' => $customers->lastPage(),
@@ -38,40 +38,34 @@ class CustomerController extends Controller
     public function store(CreateCustomerRequest $request): JsonResponse
     {
         $customer = Customer::create($request->validated());
-        
+
         $customer->load('addresses');
-        
+
         return response()->json([
-            'message' => 'Customer created successfully',
-            'data' => $customer->toArray()
+            ...$customer->toArray()
         ], 201);
     }
 
     public function show(Customer $customer): JsonResponse
     {
         $customer->load(['addresses', 'orders']);
-        
-        return response()->json([
-            'data' => $customer->toArray()
-        ]);
+
+        return response()->json($customer->toArray());
     }
 
     public function update(UpdateCustomerRequest $request, Customer $customer): JsonResponse
     {
         $customer->update($request->validated());
-        
+
         $customer->load('addresses');
-        
-        return response()->json([
-            'message' => 'Customer updated successfully',
-            'data' => $customer->toArray()
-        ]);
+
+        return response()->json($customer->toArray());
     }
 
     public function destroy(Customer $customer): JsonResponse
     {
         $customer->delete();
-        
+
         return response()->json([
             'message' => 'Customer deleted successfully'
         ]);
@@ -88,7 +82,7 @@ class CustomerController extends Controller
         ]);
 
         $address = $customer->addresses()->create($request->all());
-        
+
         return response()->json([
             'message' => 'Address created successfully for customer',
             'data' => $address->toArray()
