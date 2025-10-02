@@ -27,23 +27,6 @@ class Product extends Model
         return $this->hasMany(PriceHistory::class);
     }
 
-    public function stockHistories()
-    {
-        return $this->hasMany(StockHistory::class);
-    }
-
-    public function orderItems()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
-
-    public function orders()
-    {
-        return $this->belongsToMany(Order::class, 'order_items')
-                    ->withPivot('quantity', 'unit_price', 'total_price', 'clothes_variant_id')
-                    ->withTimestamps();
-    }
-
     public function toArray(): array
     {
         $result = [
@@ -60,8 +43,6 @@ class Product extends Model
         ];
         if ($this->category == 'Clothing') {
             $result['clothesVariants'] = $this->clothesVariants;
-        } else {
-            $result['stockHistories'] = $this->stockHistories;
         }
         return $result;
     }

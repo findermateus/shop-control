@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Modal from "@/components/ui/modal";
 import { formatCurrency } from "@/hooks/use-currency";
 import { Product } from "@/lib/types/stock";

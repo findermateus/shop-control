@@ -1,6 +1,5 @@
 import { AlertTriangle, CircleDollarSign, Package } from "lucide-react";
 import StockInfoCard from "./stock-info-card";
-import {formatCurrency} from "@/hooks/use-currency";
 
 interface StockDashboardProps {
     readonly totalProducts?: number;
@@ -24,12 +23,6 @@ export default function StockDashboard(props: StockDashboardProps) {
                 value={totalProducts}
             />
             <StockInfoCard
-                title="Valor Total"
-                icon={<CircleDollarSign className="h-4 w-4 text-green-600" />}
-                value={formatCurrency(totalValue)}
-                valueColor="text-green-600"
-            />
-            <StockInfoCard
                 title="Estoque Baixo"
                 icon={<AlertTriangle className="h-4 w-4 text-yellow-500" />}
                 value={lowStockProducts}
@@ -40,6 +33,12 @@ export default function StockDashboard(props: StockDashboardProps) {
                 icon={<AlertTriangle className="h-4 w-4 text-red-500" />}
                 value={outOfStockProducts}
                 valueColor="text-red-600"
+            />
+            <StockInfoCard
+                title="Valor Total"
+                icon={<CircleDollarSign className="h-4 w-4 text-green-600" />}
+                value={totalValue}
+                valueColor="text-green-600"
             />
         </section>
     );

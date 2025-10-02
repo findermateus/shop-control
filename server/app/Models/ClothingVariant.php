@@ -27,19 +27,4 @@ class ClothingVariant extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    public function stockHistories()
-    {
-        return $this->hasMany(StockHistory::class, 'clothing_variant_id');
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'size' => $this->size,
-            'stock' => $this->stock,
-            'stockHistories' => $this->stockHistories,
-        ];
-    }
 }

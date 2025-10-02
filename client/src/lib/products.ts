@@ -22,7 +22,8 @@ export async function fetchProducts(): Promise<Array<Product>> {
             );
             throw new Error("Erro ao buscar produtos");
         }
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error("Error:", error);
         return [];
@@ -55,7 +56,8 @@ export async function createProduct(
             );
             throw new Error("Erro ao criar produto");
         }
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error("Error:", error);
         return null;
@@ -158,39 +160,5 @@ export async function updateProductPrice(id: number | string, price: number) {
     } catch (error) {
         console.error("Error updating product price:", error);
         throw new Error("Failed to update product price");
-    }
-}
-
-export async function updateProductStock(
-    id: number | string,
-    value: number,
-    clothingVariantId?: number
-) {
-    const token = await getAuthorizationToken();
-
-    try {
-        const body: { value: number; clothingVariantId?: number } = { value };
-        if (clothingVariantId) {
-            body.clothingVariantId = clothingVariantId;
-        }
-
-        const result = await fetch(`${getServerUrl()}/products/${id}/stock`, {
-            method: "PATCH",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(body),
-        });
-
-        if (!result.ok) {
-            throw new Error("Failed to update product stock");
-        }
-
-        return await result.json();
-    } catch (error) {
-        console.error("Error updating product stock:", error);
-        throw new Error("Failed to update product stock");
     }
 }
