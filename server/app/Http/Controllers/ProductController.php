@@ -7,9 +7,10 @@ use App\Exceptions\ProductNotFoundException;
 use App\Http\Requests\ChangeProductPriceRequest;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\UpdateProductStockRequest;
 use App\Models\ClothingVariant;
-use App\Models\PriceHistory;
 use App\Models\Product;
+use App\Services\LogService;
 
 class ProductController extends Controller
 {
@@ -24,10 +25,7 @@ class ProductController extends Controller
         if ($category == 'Clothing') {
             $this->createClothingVariants($product->id);
         }
-        PriceHistory::create([
-            'product_id' => $product->id,
-            'price' => $product->price
-        ]);
+        LogService::recordPriceChange($product->id, $product->price);
         return response()->json(['message' => 'Product created successfully'], 201);
     }
 
@@ -99,10 +97,29 @@ class ProductController extends Controller
         $data = $request->validated();
         $product->price = $data['price'];
         $product->save();
-        PriceHistory::create([
-            'product_id' => $product->id,
-            'price' => $product->price
-        ]);
+        LogService::recordPriceChange($product->id, $product->price);
         return response()->json(['message' => 'Product price updated successfully']);
+    }
+
+    public function updateProductStock(int $id, UpdateProductStockRequest $request)
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            throw new ProductNotFoundException();
+        }
+        $data = $request->validated();
+        $value = $data['value'];
+        $clothingVariantId = $data['clothingVariantId'] ?? null;
+        if (is_numeric($clothingVariantId)) {
+            $variant = $product->clothesVariants()->where('id', $data['clothingVariantId'])->firstOrFail();
+            $variant->stock += $value;
+            $variant->save();
+            LogService::recordStockChange($product->id, $variant->stock, $value, auth()->id(), 'Stock changed via manager panel', $variant->id);
+        } else {
+            $product->stock += $value;
+            $product->save();
+            LogService::recordStockChange($product->id, $product->stock, $value, auth()->id(), 'Stock changed via manager panel');
+        }
+        return response()->json(['message' => 'Product stock updated successfully']);
     }
 }

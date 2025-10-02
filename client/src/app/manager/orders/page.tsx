@@ -1,12 +1,9 @@
-import ManagerPageTitle from "@/components/shared/manager-page-title";
+import OrdersPage from "@/components/shared/orders/orders-page";
+import { mockOrders, getMockOrderStats } from "@/lib/mock-orders";
 
 export default function Page() {
-    return (
-        <div>
-            <ManagerPageTitle
-                title="Pedidos"
-                description="Visualize e gerencie todos os pedidos da loja"
-            />
-        </div>
-    );
+    const orders = mockOrders;
+    const stats = getMockOrderStats();
+    
+    return <OrdersPage orders={orders} stats={stats} />;
 }

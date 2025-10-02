@@ -114,7 +114,7 @@ const UpdateProductContent = (props: UpdateProductContentProps) => {
     };
 
     return (
-        <div className="grid w-full max-w-sm items-center gap-3">
+        <div className="grid w-full items-center gap-3">
             <Label htmlFor="name">Nome</Label>
             <Input
                 type="text"
