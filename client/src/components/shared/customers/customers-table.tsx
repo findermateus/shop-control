@@ -1,195 +1,229 @@
 "use client";
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Eye, Edit, Trash2, MapPin, Package } from "lucide-react";
+import { useState, useMemo } from "react";
 import { Customer } from "@/lib/types/customers";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Eye, Edit, Trash2, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 interface CustomersTableProps {
-    readonly customers: Customer[];
+  customers: Customer[];
+  searchTerm: string;
+  onCustomerUpdated: () => void;
 }
 
-export default function CustomersTable(props: CustomersTableProps) {
-    const { customers } = props;
+export default function CustomersTable({
+  customers,
+  searchTerm,
+  onCustomerUpdated,
+}: CustomersTableProps) {
+  const [deletingCustomer, setDeletingCustomer] = useState<number | null>(null);
 
-    const getAvatarColor = (name: string) => {
-        const colors = [
-            'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-green-500', 
-            'bg-yellow-500', 'bg-red-500', 'bg-indigo-500', 'bg-orange-500'
-        ];
-        const index = name.charCodeAt(0) % colors.length;
-        return colors[index];
-    };
+  const filteredCustomers = useMemo(() => {
+    return customers.filter((customer) => {
+      const matchesSearch =
+        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.cellphone.includes(searchTerm);
 
-    const getStatusBadge = (customer: Customer) => {
-        // Clientes VIP (mais de 10 pedidos)
-        if (customer.totalOrders > 10) {
-            return (
-                <Badge className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full">
-                    VIP
-                </Badge>
-            );
-        }
-        
-        // Clientes novos (criados nos últimos 30 dias)
-        const createdDate = new Date(customer.createdAt);
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
-        if (createdDate > thirtyDaysAgo) {
-            return (
-                <Badge className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
-                    Novo
-                </Badge>
-            );
-        }
+      return matchesSearch;
+    });
+  }, [customers, searchTerm]);
 
-        const statusConfig = {
-            active: { label: "Ativo", color: "bg-green-100 text-green-700 text-xs px-2 py-1" },
-            inactive: { label: "Inativo", color: "bg-orange-100 text-orange-700 text-xs px-2 py-1" },
-            blocked: { label: "Bloqueado", color: "bg-red-100 text-red-700 text-xs px-2 py-1" },
-        };
+  const getCustomerInitials = (name: string) => {
+    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+  };
 
-        const config = statusConfig[customer.status];
-        return (
-            <Badge className={`${config.color} rounded-full`}>
-                {config.label}
-            </Badge>
-        );
-    };
+  const getAvatarColor = (name: string) => {
+    const colors = [
+      "bg-red-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-purple-500",
+      "bg-orange-500",
+      "bg-pink-500",
+      "bg-indigo-500",
+      "bg-teal-500",
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
 
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(value);
-    };
+  const getPrimaryAddress = (customer: Customer) => {
+    if (customer.addresses && customer.addresses.length > 0) {
+      const address = customer.addresses[0];
+      if (address.neighborhood && address.street) {
+        return `${address.neighborhood}, ${address.street}`;
+      }
 
-    const formatDate = (dateString: string) => {
-        return new Intl.DateTimeFormat('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        }).format(new Date(dateString));
-    };
+      if (address.street) {
+        return address.street;
+      }
 
-    const handleViewCustomer = (customerId: number) => {
-        console.log('Ver cliente:', customerId);
-        // Implementar navegação ou modal para detalhes do cliente
-    };
+      if (address.neighborhood) {
+        return address.neighborhood;
+      }
+    }
 
-    const handleEditCustomer = (customerId: number) => {
-        console.log('Editar cliente:', customerId);
-        // Implementar edição do cliente
-    };
+    return "Endereço não cadastrado";
+  };
 
-    const handleDeleteCustomer = (customerId: number) => {
-        console.log('Excluir cliente:', customerId);
-        // Implementar exclusão do cliente
-    };
+  const getPrimaryCep = (customer: Customer) => {
+    if (customer.addresses && customer.addresses.length > 0) {
+      const address = customer.addresses[0];
+      if (address.postal_code) {
+        return address.postal_code;
+      }
+    }
 
-    return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow className="border-b">
-                        <TableHead className="text-left font-medium text-gray-600">Cliente</TableHead>
-                        <TableHead className="text-left font-medium text-gray-600">Status</TableHead>
-                        <TableHead className="text-left font-medium text-gray-600">Localização</TableHead>
-                        <TableHead className="text-center font-medium text-gray-600">Pedidos</TableHead>
-                        <TableHead className="text-center font-medium text-gray-600">Total Gasto</TableHead>
-                        <TableHead className="text-center font-medium text-gray-600">Último Pedido</TableHead>
-                        <TableHead className="text-center font-medium text-gray-600">Ações</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {customers.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                                Nenhum cliente encontrado
-                            </TableCell>
-                        </TableRow>
-                    ) : (
-                        customers.map((customer) => (
-                            <TableRow key={customer.id} className="hover:bg-gray-50">
-                                <TableCell className="py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 ${getAvatarColor(customer.name)} rounded-full flex items-center justify-center`}>
-                                            <span className="text-sm font-semibold text-white">
-                                                {customer.name.split(' ').map(n => n[0]).join('').slice(0, 1).toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <div className="font-medium text-gray-900">{customer.name}</div>
-                                            <div className="text-sm text-gray-500">{customer.email}</div>
-                                            {customer.phone && (
-                                                <div className="text-sm text-gray-500">{customer.phone}</div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{getStatusBadge(customer)}</TableCell>
-                                <TableCell>
-                                    <div className="text-sm text-gray-600 flex items-center gap-1">
-                                        <MapPin className="h-4 w-4 text-gray-400" />
-                                        {customer.addresses[0] ? `${customer.addresses[0].city}, ${customer.addresses[0].state}` : 'Não informado'}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    <div className="font-medium flex items-center justify-center gap-1">
-                                        <Package className="h-4 w-4 text-gray-400" />
-                                        {customer.totalOrders} pedidos
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    <div className="font-medium">{formatCurrency(customer.totalSpent)}</div>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    <div className="text-sm">
-                                        {customer.lastOrderDate ? formatDate(customer.lastOrderDate) : 'Nunca'}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    <div className="flex items-center justify-center gap-1">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleViewCustomer(customer.id)}
-                                            title="Ver detalhes"
-                                        >
-                                            <Eye className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleEditCustomer(customer.id)}
-                                            title="Editar cliente"
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleDeleteCustomer(customer.id)}
-                                            title="Excluir cliente"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    )}
-                </TableBody>
-            </Table>
+    return "Não cadastrado";
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("pt-BR");
+  };
+
+  const formatPhone = (phone: string) => {
+    const cleaned = phone.replace(/\D/g, "");
+    if (cleaned.length === 11) {
+      return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    }
+    return phone;
+  };
+
+  const handleDeleteCustomer = async (customerId: number) => {
+    if (!confirm("Tem certeza que deseja excluir este cliente?")) {
+      return;
+    }
+
+    setDeletingCustomer(customerId);
+
+    try {
+      const response = await fetch(`/api/customers/${customerId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao excluir cliente");
+      }
+
+      toast.success("Cliente excluído com sucesso!");
+      onCustomerUpdated();
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      toast.error("Erro ao excluir cliente");
+    } finally {
+      setDeletingCustomer(null);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <Table>
+        <TableHeader>
+          <TableRow className="border-b border-gray-200">
+            <TableHead className="text-center font-medium text-gray-700">
+              Cliente
+            </TableHead>
+            <TableHead className="text-center font-medium text-gray-700">
+              Localização
+            </TableHead>
+            <TableHead className="text-center font-medium text-gray-700">
+              CEP
+            </TableHead>
+            <TableHead className="text-center font-medium text-gray-700">
+              Telefone
+            </TableHead>
+            <TableHead className="text-center font-medium text-gray-700">
+              Data Cadastro
+            </TableHead>
+            <TableHead className="text-center font-medium text-gray-700">
+              Ações
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredCustomers.map((customer) => (
+            <TableRow
+              key={customer.id}
+              className="border-b border-gray-100 hover:bg-gray-50"
+            >
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-full ${getAvatarColor(
+                      customer.name
+                    )} flex items-center justify-center text-white font-medium text-sm`}
+                  >
+                    {getCustomerInitials(customer.name)}
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">
+                      {customer.name}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {customer.email}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+
+              <TableCell className="text-center">
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                  <MapPin className="h-4 w-4 text-gray-400" />
+                  <span>{getPrimaryAddress(customer)}</span>
+                </div>
+              </TableCell>
+
+              <TableCell className="text-center text-sm text-gray-600">
+                {getPrimaryCep(customer)}
+              </TableCell>
+
+              <TableCell className="text-center text-sm text-gray-600">
+                {formatPhone(customer.cellphone)}
+              </TableCell>
+
+              <TableCell className="text-center text-sm text-gray-600">
+                {formatDate(customer.created_at)}
+              </TableCell>
+
+              <TableCell>
+                <div className="flex items-center justify-center gap-2">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Edit className="h-4 w-4 text-gray-500" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => handleDeleteCustomer(customer.id)}
+                    disabled={deletingCustomer === customer.id}
+                  >
+                    <Trash2 className="h-4 w-4 text-gray-500" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {filteredCustomers.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          Nenhum cliente encontrado
         </div>
-    );
+      )}
+    </div>
+  );
 }

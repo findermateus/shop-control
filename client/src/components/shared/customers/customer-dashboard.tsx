@@ -1,11 +1,6 @@
-import { 
-    Users,
-    TrendingUp,
-    UserPlus,
-    CircleDollarSign
-} from "lucide-react";
-import CustomerInfoCard from "./customer-info-card";
 import { CustomerStats } from "@/lib/types/customers";
+import CustomerInfoCard from "./customer-info-card";
+import { Users, UserPlus } from "lucide-react";
 
 interface CustomerDashboardProps {
     readonly stats: CustomerStats;
@@ -14,37 +9,33 @@ interface CustomerDashboardProps {
 export default function CustomerDashboard(props: CustomerDashboardProps) {
     const { stats } = props;
 
+    // Calcular quantos clientes novos tivemos nesta semana
+    const getWeeklySubtitle = () => {
+        if (stats.newCustomers === 0) {
+            return "Nenhum novo esta semana";
+        } else if (stats.newCustomers === 1) {
+            return "+1 novo esta semana";
+        } else {
+            return `+${stats.newCustomers} novos esta semana`;
+        }
+    };
+
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <CustomerInfoCard
                 title="Total de Clientes"
-                icon={<Users className="h-5 w-5 text-gray-500" />}
+                icon={<Users className="h-8 w-8 text-gray-600" />}
                 value={stats.totalCustomers}
-                subtitle="+2 novos esta semana"
-                valueColor="text-gray-900"
+                subtitle={getWeeklySubtitle()}
             />
-            <CustomerInfoCard
-                title="Clientes Ativos"
-                icon={<TrendingUp className="h-5 w-5 text-green-500" />}
-                value={stats.activeCustomers}
-                subtitle={`${Math.round((stats.activeCustomers / stats.totalCustomers) * 100)}% do total`}
-                valueColor="text-green-600"
-            />
+            
             <CustomerInfoCard
                 title="Novos Clientes"
-                icon={<UserPlus className="h-5 w-5 text-blue-500" />}
-                value={stats.newCustomersThisMonth}
-                subtitle="Este mês"
+                icon={<UserPlus className="h-8 w-8 text-blue-600" />}
+                value={stats.newCustomers}
                 valueColor="text-blue-600"
+                subtitle="Este mês"
             />
-            <CustomerInfoCard
-                title="Valor Total"
-                icon={<CircleDollarSign className="h-5 w-5 text-green-500" />}
-                value={stats.totalRevenue}
-                subtitle="Receita total"
-                valueColor="text-green-600"
-                formatAsCurrency={true}
-            />
-        </section>
+        </div>
     );
 }

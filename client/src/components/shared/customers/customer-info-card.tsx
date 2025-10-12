@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 interface CustomerInfoCardProps {
     readonly title: string;
@@ -13,6 +13,11 @@ export default function CustomerInfoCard(props: CustomerInfoCardProps) {
     const { title, icon, value, valueColor = "text-foreground", formatAsCurrency = false, subtitle } = props;
     
     const formatValue = (val: number | string) => {
+        // Verificação para undefined/null
+        if (val === undefined || val === null) {
+            return formatAsCurrency ? "R$ 0,00" : "0";
+        }
+        
         if (formatAsCurrency && typeof val === 'number') {
             return new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
@@ -24,16 +29,20 @@ export default function CustomerInfoCard(props: CustomerInfoCardProps) {
 
     return (
         <Card className="p-6 bg-white border border-gray-200 shadow-sm rounded-lg">
-            <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-gray-700">{title}</h3>
-                {icon}
+            <div className="flex items-center justify-between">
+                <div>
+                    <p className="text-sm font-medium text-gray-700 mb-3">{title}</p>
+                    <p className={`text-3xl font-bold ${valueColor}`}>
+                        {formatValue(value)}
+                    </p>
+                    {subtitle && (
+                        <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
+                    )}
+                </div>
+                <div className="ml-4">
+                    {icon}
+                </div>
             </div>
-            <div className={`text-3xl font-bold ${valueColor} mb-1`}>
-                {formatValue(value)}
-            </div>
-            {subtitle && (
-                <p className="text-sm text-gray-500">{subtitle}</p>
-            )}
         </Card>
     );
 }
