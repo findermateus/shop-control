@@ -41,12 +41,9 @@ export async function fetchCustomers(): Promise<Customer[]> {
         const responseText = await response.text();
         const result = JSON.parse(responseText);
         
-        // Converter o formato da API Laravel para array
         const customers: Customer[] = [];
         
-        // Percorrer as chaves numéricas
         for (const key in result) {
-            // Pular a chave 'pagination'
             if (key !== 'pagination' && !isNaN(Number(key))) {
                 customers.push(result[key]);
             }
@@ -56,6 +53,51 @@ export async function fetchCustomers(): Promise<Customer[]> {
     } catch (error) {
         console.error("Error:", error);
         return [];
+    }
+}
+
+export async function createCustomer(
+    customerData: CreateCustomerData
+): Promise<Customer | null> {
+    try {
+        const token = await getAuthorizationToken();
+        
+        if (!token) {
+            console.error("Token de autenticação não encontrado");
+            return null;
+        }
+        
+        const url = getServerUrl() + "/customers";
+        
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(customerData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Erro ao criar cliente:", errorText);
+            return null;
+        }
+
+        const result = await response.json();
+        
+        // O Laravel retorna o objeto diretamente
+        if (result && result.id) {
+            return result as Customer;
+        } else {
+            console.error("Resposta inválida do servidor");
+            return null;
+        }
+        
+    } catch (error) {
+        console.error("Erro ao criar cliente:", error);
+        return null;
     }
 }
 
@@ -80,40 +122,6 @@ export async function fetchCustomer(id: number | string): Promise<Customer | nul
                 data.message || "Erro ao buscar cliente"
             );
             throw new Error("Erro ao buscar cliente");
-        }
-
-        const result: SingleCustomerResponse = await response.json();
-        return result.data;
-    } catch (error) {
-        console.error("Error:", error);
-        return null;
-    }
-}
-
-export async function createCustomer(
-    customerData: CreateCustomerData
-): Promise<Customer | null> {
-    const token = await getAuthorizationToken();
-    const url = getServerUrl() + "/customers";
-    
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(customerData),
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            console.error(
-                "Error creating customer:",
-                data.message || "Erro ao criar cliente"
-            );
-            throw new Error("Erro ao criar cliente");
         }
 
         const result: SingleCustomerResponse = await response.json();

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Customer, CustomerStats } from "@/lib/types/customers";
 import CustomerDashboard from "./customer-dashboard";
 import CustomersTable from "./customers-table";
+import CreateCustomerModal from "@/components/shared/customers/customer-modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Plus } from "lucide-react";
@@ -17,6 +18,7 @@ export default function CustomersPage() {
     });
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     useEffect(() => {
         fetchCustomersData();
@@ -34,7 +36,7 @@ export default function CustomersPage() {
         // Pegar o primeiro dia do mês atual
         const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-        // Clientes novos no mês atual (não mais nos últimos 30 dias)
+        // Clientes novos no mês atual
         const newCustomers = customersList.filter((customer) => {
             if (!customer.created_at) return false;
             const createdAt = new Date(customer.created_at);
@@ -58,13 +60,13 @@ export default function CustomersPage() {
 
             const data = await response.json();
             const customersData = data.data || [];
-
+            
             setCustomers(customersData);
             setStats(calculateStats(customersData));
         } catch (error) {
             console.error("Erro ao carregar clientes:", error);
             toast.error("Erro ao carregar clientes");
-
+            
             setStats({
                 totalCustomers: 0,
                 newCustomers: 0,
@@ -72,6 +74,18 @@ export default function CustomersPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCreateCustomer = () => {
+        setIsCreateModalOpen(true);
+    };
+
+    const handleCloseCreateModal = () => {
+        setIsCreateModalOpen(false);
+    };
+
+    const handleCustomerCreated = () => {
+        fetchCustomersData(); // Recarrega a lista de clientes
     };
 
     if (loading) {
@@ -104,7 +118,10 @@ export default function CustomersPage() {
                             Filtros
                         </h3>
                     </div>
-                    <Button className="bg-black text-white hover:bg-gray-800">
+                    <Button 
+                        className="bg-black text-white hover:bg-gray-800"
+                        onClick={handleCreateCustomer}
+                    >
                         <Plus className="h-4 w-4 mr-2" />
                         Novo Cliente
                     </Button>
@@ -133,6 +150,13 @@ export default function CustomersPage() {
                     onCustomerUpdated={fetchCustomersData}
                 />
             </div>
+
+            {/* Modal de criação */}
+            <CreateCustomerModal
+                isOpen={isCreateModalOpen}
+                onClose={handleCloseCreateModal}
+                onCustomerCreated={handleCustomerCreated}
+            />
         </div>
     );
 }

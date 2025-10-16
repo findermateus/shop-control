@@ -40,6 +40,7 @@ export interface CreateCustomerData {
   name: string
   email: string
   cellphone: string
+  oauth_provider: string
 }
 
 export interface CreateAddressData {
