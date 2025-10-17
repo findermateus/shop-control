@@ -1,12 +1,14 @@
 import { createCustomerAddress } from '@/lib/customers'
 import { NextRequest, NextResponse } from 'next/server'
 
-interface RouteParams {
-  params: { id: string }
-}
-
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
+    // Aguardar params antes de usar (Next.js 15)
+    const { id } = await context.params;
+    
     const body = await request.json()
     const { postal_code, street, neighborhood, number, complement } = body
 
@@ -17,13 +19,22 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    const address = await createCustomerAddress(params.id, {
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID do cliente é obrigatório' },
+        { status: 422 }
+      )
+    }
+
+    const addressData = {
       postal_code,
       street,
       neighborhood,
       number,
-      complement
-    })
+      complement: complement || undefined // Opcional
+    }
+    
+    const address = await createCustomerAddress(id, addressData)
     
     if (!address) {
       return NextResponse.json(
@@ -32,10 +43,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    return NextResponse.json({ 
-      message: 'Address created successfully for customer',
-      data: address 
-    }, { status: 201 })
+    return NextResponse.json({ data: address }, { status: 201 })
   } catch (error) {
     console.error('Error creating address:', error)
     return NextResponse.json(

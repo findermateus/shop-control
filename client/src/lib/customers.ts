@@ -212,10 +212,16 @@ export async function createCustomerAddress(
     customerId: number | string,
     addressData: CreateAddressData
 ): Promise<any | null> {
-    const token = await getAuthorizationToken();
-    const url = getServerUrl() + `/customers/${customerId}/addresses`;
-    
     try {
+        const token = await getAuthorizationToken();
+        
+        if (!token) {
+            console.error("Token de autenticação não encontrado");
+            return null;
+        }
+        
+        const url = getServerUrl() + `/customers/${customerId}/addresses`;
+        
         const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -227,19 +233,103 @@ export async function createCustomerAddress(
         });
 
         if (!response.ok) {
-            const data = await response.json();
-            console.error(
-                "Error creating address:",
-                data.message || "Erro ao criar endereço"
-            );
-            throw new Error("Erro ao criar endereço");
+            const errorText = await response.text();
+            console.error("Erro ao criar endereço:", errorText);
+            return null;
         }
 
         const result = await response.json();
-        return result.data;
+        
+        // O Laravel retorna o objeto diretamente ou dentro de data
+        if (result && (result.id || result.data)) {
+            return result.data || result;
+        } else {
+            console.error("Resposta inválida do servidor");
+            return null;
+        }
+        
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Erro ao criar endereço:", error);
         return null;
+    }
+}
+
+export async function updateCustomerAddress(
+    addressId: number | string,
+    addressData: CreateAddressData
+): Promise<any | null> {
+    try {
+        const token = await getAuthorizationToken();
+        
+        if (!token) {
+            console.error("Token de autenticação não encontrado");
+            return null;
+        }
+        
+        const url = getServerUrl() + `/addresses/${addressId}`;
+        
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(addressData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Erro ao atualizar endereço:", errorText);
+            return null;
+        }
+
+        const result = await response.json();
+        
+        if (result && (result.id || result.data)) {
+            return result.data || result;
+        } else {
+            console.error("Resposta inválida do servidor");
+            return null;
+        }
+        
+    } catch (error) {
+        console.error("Erro ao atualizar endereço:", error);
+        return null;
+    }
+}
+
+export async function deleteCustomerAddress(addressId: number | string): Promise<boolean> {
+    try {
+        const token = await getAuthorizationToken();
+        
+        if (!token) {
+            console.error("Token de autenticação não encontrado");
+            return false;
+        }
+        
+        const url = getServerUrl() + `/addresses/${addressId}`;
+        
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Erro ao excluir endereço:", errorText);
+            return false;
+        }
+
+        return true;
+        
+    } catch (error) {
+        console.error("Erro ao excluir endereço:", error);
+        return false;
     }
 }
 
