@@ -90,24 +90,24 @@ export default function CustomersPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold text-gray-900">Clientes</h1>
-                <p className="mt-2 text-gray-600">
+                <h1 className="text-3xl font-bold text-foreground">Clientes</h1>
+                <p className="mt-2 text-muted-foreground">
                     Gerencie todos os clientes da Esquina Geek
                 </p>
             </div>
 
             <CustomerDashboard stats={stats} />
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-card rounded-lg border border-border p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <Filter className="h-5 w-5 text-gray-500" />
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <Filter className="h-5 w-5 text-muted-foreground" />
+                        <h3 className="text-lg font-medium text-card-foreground">
                             Filtros
                         </h3>
                     </div>
                     <Button 
-                        className="bg-black text-white hover:bg-gray-800"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
                         onClick={handleCreateCustomer}
                     >
                         <Plus className="h-4 w-4 mr-2" />
@@ -116,7 +116,7 @@ export default function CustomersPage() {
                 </div>
 
                 <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
                         placeholder="Buscar por nome ou email..."
                         value={searchTerm}
@@ -127,7 +127,7 @@ export default function CustomersPage() {
             </div>
 
             <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-foreground">
                     Lista de Clientes ({customers.length})
                 </h3>
 

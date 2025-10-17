@@ -195,18 +195,18 @@ export default function CreateAddressModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-gray-600" />
+          <DialogTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-muted-foreground" />
             Novo Endereço
           </DialogTitle>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Adicionar endereço para {customerName}
           </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="postal_code" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="postal_code" className="text-sm font-medium text-foreground">
               CEP *
             </Label>
             <Input
@@ -220,7 +220,7 @@ export default function CreateAddressModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="street" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="street" className="text-sm font-medium text-foreground">
               Rua *
             </Label>
             <Input
@@ -235,7 +235,21 @@ export default function CreateAddressModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="neighborhood" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="number" className="text-sm font-medium text-foreground">
+                Número *
+              </Label>
+              <Input
+                id="number"
+                type="text"
+                value={formData.number}
+                onChange={(e) => handleInputChange("number", e.target.value)}
+                disabled={isLoading}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="neighborhood" className="text-sm font-medium text-foreground">
                 Bairro *
               </Label>
               <Input
@@ -247,24 +261,10 @@ export default function CreateAddressModal({
                 className="w-full"
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="number" className="text-sm font-medium text-gray-700">
-                Número *
-              </Label>
-              <Input
-                  id="number"
-                  type="text"
-                  value={formData.number}
-                  onChange={(e) => handleInputChange("number", e.target.value)}
-                  disabled={isLoading}
-                  className="w-full"
-              />
-            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="complement" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="complement" className="text-sm font-medium text-foreground">
               Complemento
             </Label>
             <Input
@@ -288,7 +288,7 @@ export default function CreateAddressModal({
             </Button>
             <Button
               type="submit"
-              className="bg-black text-white hover:bg-gray-800"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={isLoading}
             >
               {isLoading ? "Criando..." : "Criar Endereço"}

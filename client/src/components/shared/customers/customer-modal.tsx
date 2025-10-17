@@ -152,14 +152,14 @@ export default function CreateCustomerModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900">
+          <DialogTitle className="text-xl font-semibold text-foreground">
             Novo Cliente
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="name" className="text-sm font-medium text-foreground">
               Nome completo *
             </Label>
             <Input
@@ -174,7 +174,7 @@ export default function CreateCustomerModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="email" className="text-sm font-medium text-foreground">
               Email *
             </Label>
             <Input
@@ -189,7 +189,7 @@ export default function CreateCustomerModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cellphone" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="cellphone" className="text-sm font-medium text-foreground">
               Telefone *
             </Label>
             <Input
@@ -214,7 +214,7 @@ export default function CreateCustomerModal({
             </Button>
             <Button
               type="submit"
-              className="bg-black text-white hover:bg-gray-800"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={isLoading}
             >
               {isLoading ? "Criando..." : "Criar Cliente"}
