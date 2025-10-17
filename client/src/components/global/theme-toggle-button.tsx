@@ -10,7 +10,7 @@ export function ThemeToggleButton() {
   return (
     <Button
       onClick={toggleTheme}
-      className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+      className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
       size="icon"
       aria-label="Alternar tema"
     >

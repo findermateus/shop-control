@@ -235,20 +235,6 @@ export default function CreateAddressModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="number" className="text-sm font-medium text-foreground">
-                Número *
-              </Label>
-              <Input
-                id="number"
-                type="text"
-                value={formData.number}
-                onChange={(e) => handleInputChange("number", e.target.value)}
-                disabled={isLoading}
-                className="w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="neighborhood" className="text-sm font-medium text-foreground">
                 Bairro *
               </Label>
@@ -261,6 +247,21 @@ export default function CreateAddressModal({
                 className="w-full"
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="number" className="text-sm font-medium text-foreground">
+                Número *
+              </Label>
+              <Input
+                  id="number"
+                  type="text"
+                  value={formData.number}
+                  onChange={(e) => handleInputChange("number", e.target.value)}
+                  disabled={isLoading}
+                  className="w-full"
+              />
+            </div>
+
           </div>
 
           <div className="space-y-2">
