@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { LoadingProvider } from "@/providers/LoadingProvider";
 import {getStoreDescription, getStoreName} from "@/lib/client-utils";
+import { ThemeToggleButton } from "@/components/global/theme-toggle-button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <LoadingProvider>
           {children}
           <Toaster />
+          <ThemeToggleButton />
         </LoadingProvider>
       </body>
     </html>
