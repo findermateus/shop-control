@@ -8,7 +8,7 @@ import {
     SidebarHeader,
 } from "@/components/ui/sidebar";
 import { SidebarItem } from "./side-bar-item";
-import { LayoutDashboard, LogOut, Package, ShoppingCart } from "lucide-react";
+import { LayoutDashboard, LogOut, Package, ShoppingCart, Users } from "lucide-react";
 import { Button } from "../ui/button";
 import {getStoreName} from "@/lib/client-utils";
 
@@ -26,19 +26,24 @@ export function AppSidebar() {
                 <SidebarGroup />
                 <nav>
                     <SidebarItem
-                        icon={<Package />}
-                        text="Estoque"
-                        route="/manager/stock"
-                    />
-                    <SidebarItem
                         icon={<LayoutDashboard />}
                         text="Dashboard"
                         route="/manager/dashboard"
                     />
                     <SidebarItem
+                        icon={<Package />}
+                        text="Estoque"
+                        route="/manager/stock"
+                    />
+                    <SidebarItem
                         icon={<ShoppingCart />}
                         text="Pedidos"
                         route="/manager/orders"
+                    />
+                    <SidebarItem
+                        icon={<Users />}
+                        text="Clientes"
+                        route="/manager/customers"
                     />
                 </nav>
                 <SidebarGroup />
