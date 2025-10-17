@@ -33,7 +33,7 @@ class StockHistory extends Model
 
     public function manager(): BelongsTo
     {
-        return $this->belongsTo(Manager::class);
+        return $this->belongsTo(Manager::class)->withDefault();
     }
 
     public function toArray()
