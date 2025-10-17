@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { LoadingProvider } from "@/providers/LoadingProvider";
+import {getStoreDescription, getStoreName} from "@/lib/client-utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Esquina Geek",
-  description: "E-commerce Esquina Geek",
+  title: getStoreName(),
+  description: getStoreDescription(),
 };
 
 export default function RootLayout({

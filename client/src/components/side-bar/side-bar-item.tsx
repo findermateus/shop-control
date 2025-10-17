@@ -2,9 +2,9 @@
 
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import {usePathname, useRouter} from "next/navigation";
+import type {ReactNode} from "react";
+import {cn} from "@/lib/utils";
 
 interface SidebarItemProps {
     readonly icon: ReactNode;
@@ -12,7 +12,7 @@ interface SidebarItemProps {
     readonly route: string;
 }
 
-export function SidebarItem({ icon, text, route }: SidebarItemProps) {
+export function SidebarItem({icon, text, route}: SidebarItemProps) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -26,13 +26,15 @@ export function SidebarItem({ icon, text, route }: SidebarItemProps) {
         <button
             onClick={handleClick}
             className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-50",
+                "flex w-full items-center gap-3 rounded-xl px-4 py-2.5 font-medium transition-all duration-200",
+                "text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-gray-300",
+                "dark:text-gray-400 dark:hover:text-gray-50 dark:hover:bg-gray-800 dark:focus-visible:ring-gray-700",
                 isActive &&
-                    "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+                "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50 shadow-sm"
             )}
         >
             {icon}
-            <span className="font-medium">{text}</span>
+            <span className="truncate">{text}</span>
         </button>
     );
 }

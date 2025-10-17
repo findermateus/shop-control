@@ -10,6 +10,7 @@ import {
 import { SidebarItem } from "./side-bar-item";
 import { LayoutDashboard, LogOut, Package, ShoppingCart } from "lucide-react";
 import { Button } from "../ui/button";
+import {getStoreName} from "@/lib/client-utils";
 
 export function AppSidebar() {
     return (
@@ -17,7 +18,7 @@ export function AppSidebar() {
             <SidebarHeader>
                 <header className="border-b border-gray-200 p-4 dark:border-gray-800">
                     <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        Esquina Geek
+                        {getStoreName()}
                     </h2>
                 </header>
             </SidebarHeader>
