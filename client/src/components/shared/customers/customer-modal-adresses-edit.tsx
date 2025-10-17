@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { MapPin } from "lucide-react";
 import { CustomerAddress } from "@/lib/types/customers";
+import { useLoading } from "@/providers/LoadingProvider";
 
 interface EditAddressModalProps {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export default function EditAddressModal({
     complement: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [cepInitialized, setCepInitialized] = useState(false);
+  const { setLoading } = useLoading();
 
   // Preencher formulário quando address mudar
   useEffect(() => {
@@ -43,6 +46,7 @@ export default function EditAddressModal({
         number: address.number || "",
         complement: address.complement || "",
       });
+      setCepInitialized(true);
     } else {
       setFormData({
         postal_code: "",
@@ -51,6 +55,7 @@ export default function EditAddressModal({
         number: "",
         complement: "",
       });
+      setCepInitialized(false);
     }
   }, [address]);
 
@@ -75,7 +80,58 @@ export default function EditAddressModal({
   const handleCepChange = (value: string) => {
     const formatted = formatCep(value);
     handleInputChange("postal_code", formatted);
+    setCepInitialized(true);
   };
+
+  const fetchAddressByCep = async (cep: string) => {
+    const cepNumbers = cep.replace(/\D/g, "");
+
+    if (cepNumbers.length !== 8) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cepNumbers}/json/`);
+
+      if (!response.ok) {
+        toast.error("Erro ao buscar CEP");
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.erro) {
+        toast.error("CEP não encontrado");
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        street: data.logradouro || "",
+        neighborhood: data.bairro || "",
+        complement: data.complemento || prev.complement,
+      }));
+
+      toast.success("Endereço carregado com sucesso!");
+    } catch (error) {
+      console.error("Error fetching CEP:", error);
+      toast.error("Erro ao buscar CEP. Verifique o número digitado.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!cepInitialized) return;
+
+    const cepNumbers = formData.postal_code.replace(/\D/g, "");
+
+    if (cepNumbers.length === 8 && address?.postal_code !== formData.postal_code) {
+      fetchAddressByCep(formData.postal_code);
+    }
+  }, [formData.postal_code, cepInitialized]);
 
   const validateForm = () => {
     if (!formData.postal_code.trim()) {

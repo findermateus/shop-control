@@ -64,6 +64,8 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer): JsonResponse
     {
+        $customer->orders()->delete();
+        $customer->addresses()->delete();
         $customer->delete();
 
         return response()->json([

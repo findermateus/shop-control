@@ -11,22 +11,22 @@ import {ApiOrder} from "@/lib/types/orders";
 import {Button} from "@/components/ui/button";
 import OrderCreateDialog from "@/components/shared/orders/order-create-dialog";
 import {getStoreName} from "@/lib/client-utils";
+import {Customer} from "@/lib/types/customers";
 
 interface OrdersPageProps {
     readonly orders: Array<ApiOrder>;
+    readonly customers: Array<Customer>
 }
 
 export default function OrdersPage(props: OrdersPageProps) {
     const [filteredOrders, setFilteredOrders] = useState<ApiOrder[]>(props.orders);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [selectedStatus, setSelectedStatus] = useState<string>("");
-    const [selectedPaymentStatus, setSelectedPaymentStatus] = useState<string>("");
-
     useEffect(() => {
         let filtered = props.orders;
 
         setFilteredOrders(filtered);
-    }, [searchTerm, selectedStatus, selectedPaymentStatus, props.orders]);
+    }, [searchTerm, selectedStatus, props.orders]);
 
     const statusOptions = [
         {value: "pending", label: "Pendente"},
@@ -47,7 +47,7 @@ export default function OrdersPage(props: OrdersPageProps) {
                 <div className="flex flex-col gap-5">
                     <div className="flex items-center justify-between">
                         <FilterTitle/>
-                        <OrderCreateDialog trigger={<Button><Plus/> Novo Pedido</Button>}/>
+                        <OrderCreateDialog customers={props.customers} trigger={<Button><Plus/> Novo Pedido</Button>}/>
                     </div>
                     <div className="flex gap-4">
                         <div className="relative flex-1">
@@ -74,11 +74,6 @@ export default function OrdersPage(props: OrdersPageProps) {
                                     </SelectItem>
                                 ))}
                             </SelectContent>
-                        </Select>
-                        <Select onValueChange={(value) => setSelectedPaymentStatus(value)}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Status Pagamento"/>
-                            </SelectTrigger>
                         </Select>
                     </div>
                 </div>

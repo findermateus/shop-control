@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import {useState, useMemo, Fragment} from "react";
 import { Customer } from "@/lib/types/customers";
 import {
   Table,
@@ -17,6 +17,16 @@ import EditCustomerModal from "@/components/shared/customers/customer-modal-edit
 import CreateAddressModal from "@/components/shared/customers/customer-modal-adresses";
 import EditAddressModal from "@/components/shared/customers/customer-modal-adresses-edit";
 import { CustomerAddress } from "@/lib/types/customers";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface CustomersTableProps {
   customers: Customer[];
@@ -39,14 +49,14 @@ export default function CustomersTable({
   const [isEditAddressModalOpen, setIsEditAddressModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<CustomerAddress | null>(null);
 
+  const [deleteCustomerDialog, setDeleteCustomerDialog] = useState<{ isOpen: boolean; customerId: number | null }>({ isOpen: false, customerId: null });
+  const [deleteAddressDialog, setDeleteAddressDialog] = useState<{ isOpen: boolean; addressId: number | null; customerId: number | null }>({ isOpen: false, addressId: null, customerId: null });
+
   const filteredCustomers = useMemo(() => {
     return customers.filter((customer) => {
-      const matchesSearch =
-        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      return customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.cellphone.includes(searchTerm);
-
-      return matchesSearch;
     });
   }, [customers, searchTerm]);
 
@@ -75,16 +85,16 @@ export default function CustomersTable({
       if (address.neighborhood && address.street) {
         return `${address.neighborhood}, ${address.street}`;
       }
-      
+
       if (address.street) {
         return address.street;
       }
-      
+
       if (address.neighborhood) {
         return address.neighborhood;
       }
     }
-    
+
     return "Endereço não cadastrado";
   };
 
@@ -95,7 +105,7 @@ export default function CustomersTable({
         return address.postal_code;
       }
     }
-    
+
     return "Não cadastrado";
   };
 
@@ -161,10 +171,6 @@ export default function CustomersTable({
   };
 
   const handleDeleteAddress = async (addressId: number, customerId: number) => {
-    if (!confirm("Tem certeza que deseja excluir este endereço?")) {
-      return;
-    }
-
     setDeletingAddress(addressId);
 
     try {
@@ -187,10 +193,6 @@ export default function CustomersTable({
   };
 
   const handleDeleteCustomer = async (customerId: number) => {
-    if (!confirm("Tem certeza que deseja excluir este cliente?")) {
-      return;
-    }
-
     setDeletingCustomer(customerId);
 
     try {
@@ -240,10 +242,8 @@ export default function CustomersTable({
           </TableHeader>
           <TableBody>
             {filteredCustomers.map((customer) => (
-              <>
-                {/* Linha principal do cliente */}
+              <Fragment key={customer.id}>
                 <TableRow
-                  key={`customer-${customer.id}`}
                   className="border-b border-gray-100 hover:bg-gray-50"
                 >
                   <TableCell>
@@ -287,9 +287,9 @@ export default function CustomersTable({
 
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         className="h-8 w-8 p-0"
                         onClick={() => handleToggleAddresses(customer.id)}
                         title="Ver endereços"
@@ -300,9 +300,9 @@ export default function CustomersTable({
                           <ChevronDown className="h-4 w-4 text-gray-500" />
                         )}
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         className="h-8 w-8 p-0"
                         onClick={() => handleEditCustomer(customer)}
                         title="Editar cliente"
@@ -313,8 +313,7 @@ export default function CustomersTable({
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0"
-                        onClick={() => handleDeleteCustomer(customer.id)}
-                        disabled={deletingCustomer === customer.id}
+                        onClick={() => setDeleteCustomerDialog({ isOpen: true, customerId: customer.id } )}
                         title="Excluir cliente"
                       >
                         <Trash2 className="h-4 w-4 text-gray-500" />
@@ -323,7 +322,6 @@ export default function CustomersTable({
                   </TableCell>
                 </TableRow>
 
-                {/* Linha expandida com endereços */}
                 {expandedCustomer === customer.id && (
                   <TableRow key={`addresses-${customer.id}`} className="bg-gray-50">
                     <TableCell colSpan={6} className="p-6">
@@ -370,7 +368,7 @@ export default function CustomersTable({
                                       variant="ghost"
                                       size="sm"
                                       className="h-6 w-6 p-0"
-                                      onClick={() => handleDeleteAddress(address.id, customer.id)}
+                                      onClick={() => setDeleteAddressDialog({ isOpen: true, addressId: address.id, customerId: customer.id })}
                                       disabled={deletingAddress === address.id}
                                       title="Excluir endereço"
                                     >
@@ -384,22 +382,22 @@ export default function CustomersTable({
                                     <span className="font-medium">CEP:</span>
                                     <span>{formatCep(address.postal_code)}</span>
                                   </div>
-                                  
+
                                   <div className="flex justify-between">
                                     <span className="font-medium">Rua:</span>
                                     <span className="text-right">{address.street}</span>
                                   </div>
-                                  
+
                                   <div className="flex justify-between">
                                     <span className="font-medium">Número:</span>
                                     <span>{address.number}</span>
                                   </div>
-                                  
+
                                   <div className="flex justify-between">
                                     <span className="font-medium">Bairro:</span>
                                     <span>{address.neighborhood}</span>
                                   </div>
-                                  
+
                                   {address.complement && (
                                     <div className="flex justify-between">
                                       <span className="font-medium">Complemento:</span>
@@ -432,7 +430,7 @@ export default function CustomersTable({
                     </TableCell>
                   </TableRow>
                 )}
-              </>
+              </Fragment>
             ))}
           </TableBody>
         </Table>
@@ -444,7 +442,6 @@ export default function CustomersTable({
         )}
       </div>
 
-      {/* Modal de edição de cliente */}
       <EditCustomerModal
         isOpen={isEditModalOpen}
         customer={selectedCustomer}
@@ -452,7 +449,6 @@ export default function CustomersTable({
         onCustomerUpdated={onCustomerUpdated}
       />
 
-      {/* Modal de adicionar endereço */}
       <CreateAddressModal
         isOpen={isAddressModalOpen}
         customerId={selectedCustomerForAddress?.id || null}
@@ -461,7 +457,6 @@ export default function CustomersTable({
         onAddressCreated={onCustomerUpdated}
       />
 
-      {/* Modal de editar endereço */}
       <EditAddressModal
         isOpen={isEditAddressModalOpen}
         address={selectedAddress}
@@ -469,6 +464,54 @@ export default function CustomersTable({
         onClose={handleCloseEditAddressModal}
         onAddressUpdated={onCustomerUpdated}
       />
+
+      <AlertDialog open={deleteCustomerDialog.isOpen} onOpenChange={(open) => { if (!open) setDeleteCustomerDialog({ isOpen: false, customerId: null }); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Cliente</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteCustomerDialog({ isOpen: false, customerId: null })}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteCustomerDialog.customerId !== null) {
+                  handleDeleteCustomer(deleteCustomerDialog.customerId);
+                }
+                setDeleteCustomerDialog({ isOpen: false, customerId: null });
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteAddressDialog.isOpen} onOpenChange={(open) => { if (!open) setDeleteAddressDialog({ isOpen: false, addressId: null, customerId: null }); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Endereço</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este endereço? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAddressDialog({ isOpen: false, addressId: null, customerId: null })}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteAddressDialog.addressId !== null && deleteAddressDialog.customerId !== null) {
+                  handleDeleteAddress(deleteAddressDialog.addressId, deleteAddressDialog.customerId);
+                }
+                setDeleteAddressDialog({ isOpen: false, addressId: null, customerId: null });
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
