@@ -136,10 +136,16 @@ export async function updateCustomer(
     id: number | string,
     customerData: CreateCustomerData
 ): Promise<Customer | null> {
-    const token = await getAuthorizationToken();
-    const url = getServerUrl() + `/customers/${id}`;
-    
     try {
+        const token = await getAuthorizationToken();
+        
+        if (!token) {
+            console.error("Token de autenticação não encontrado");
+            return null;
+        }
+        
+        const url = getServerUrl() + `/customers/${id}`;
+        
         const response = await fetch(url, {
             method: "PUT",
             headers: {
@@ -151,18 +157,23 @@ export async function updateCustomer(
         });
 
         if (!response.ok) {
-            const data = await response.json();
-            console.error(
-                "Error updating customer:",
-                data.message || "Erro ao atualizar cliente"
-            );
-            throw new Error("Erro ao atualizar cliente");
+            const errorText = await response.text();
+            console.error("Erro ao atualizar cliente:", errorText);
+            return null;
         }
 
-        const result: SingleCustomerResponse = await response.json();
-        return result.data;
+        const result = await response.json();
+        
+        // O Laravel retorna o objeto diretamente
+        if (result && result.id) {
+            return result as Customer;
+        } else {
+            console.error("Resposta inválida do servidor");
+            return null;
+        }
+        
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Erro ao atualizar cliente:", error);
         return null;
     }
 }
@@ -231,3 +242,4 @@ export async function createCustomerAddress(
         return null;
     }
 }
+

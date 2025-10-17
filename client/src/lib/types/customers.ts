@@ -35,12 +35,17 @@ export interface CustomerStats {
   newCustomers: number 
 }
 
-
 export interface CreateCustomerData {
   name: string
   email: string
   cellphone: string
-  oauth_provider: string
+  oauth_provider: string 
+}
+
+export interface UpdateCustomerData {
+  name: string
+  email: string
+  cellphone: string
 }
 
 export interface CreateAddressData {

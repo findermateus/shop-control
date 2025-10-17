@@ -1,33 +1,14 @@
-import { fetchCustomer, updateCustomer, deleteCustomer } from '@/lib/customers'
+import { updateCustomer, deleteCustomer } from '@/lib/customers'
+import { UpdateCustomerData } from '@/lib/types/customers'
 import { NextRequest, NextResponse } from 'next/server'
 
-interface RouteParams {
-  params: { id: string }
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const customer = await fetchCustomer(params.id)
+    const { id } = await context.params;
     
-    if (!customer) {
-      return NextResponse.json(
-        { error: 'Cliente não encontrado' },
-        { status: 404 }
-      )
-    }
-
-    return NextResponse.json({ data: customer })
-  } catch (error) {
-    console.error('Error fetching customer:', error)
-    return NextResponse.json(
-      { error: 'Erro ao buscar cliente' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
     const body = await request.json()
     const { name, email, cellphone } = body
 
@@ -38,12 +19,25 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    const customer = await updateCustomer(params.id, { name, email, cellphone })
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID do cliente é obrigatório' },
+        { status: 422 }
+      )
+    }
+
+    const customerData: UpdateCustomerData = {
+      name,
+      email,
+      cellphone
+    }
+    
+    const customer = await updateCustomer(id, customerData as any)
     
     if (!customer) {
       return NextResponse.json(
-        { error: 'Cliente não encontrado' },
-        { status: 404 }
+        { error: 'Erro ao atualizar cliente' },
+        { status: 500 }
       )
     }
 
@@ -51,28 +45,34 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   } catch (error) {
     console.error('Error updating customer:', error)
     return NextResponse.json(
-      { error: 'Erro ao atualizar cliente' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const success = await deleteCustomer(params.id)
+    // Aguardar params antes de usar
+    const { id } = await context.params;
+    
+    const success = await deleteCustomer(id);
     
     if (!success) {
       return NextResponse.json(
-        { error: 'Cliente não encontrado' },
-        { status: 404 }
+        { error: 'Erro ao excluir cliente' },
+        { status: 500 }
       )
     }
 
-    return NextResponse.json({ message: 'Customer deleted successfully' })
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error deleting customer:', error)
     return NextResponse.json(
-      { error: 'Erro ao excluir cliente' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }
