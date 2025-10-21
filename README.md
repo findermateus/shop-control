@@ -47,6 +47,7 @@ Antes de começar, garanta que você tenha as seguintes ferramentas instaladas e
 ## Configurando o Backend (Server)
 
 O backend é uma aplicação Laravel que roda em contêineres Docker.
+Você pode fazer a configuração manualmente seguindo os passos abaixo ou simplesmente executar o script *install.sh*, que automatiza todo o processo.
 
 1.  **Navegue até o diretório do servidor:**
     ```bash
