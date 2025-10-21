@@ -85,8 +85,8 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                                 variant={"secondary"}
                                 className={
                                     product.active
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-red-100 text-red-800"
+                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
+                                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100"
                                 }
                             >
                                 {product.active ? "Ativo" : "Inativo"}
@@ -102,7 +102,7 @@ export default function StockProductsTable(props: StockProductsTableProps) {
                             <Tooltipable trigger={<span><StockHistoryDialog product={product}/></span>} content={'Ver histórico de estoque'}/>
                         </TableCell>
                         <TableCell>
-                            <div className="flex justify-center gap-1">
+                            <div className="flex justify-around items-center gap-1">
                             <Tooltipable trigger={<span><StockUpdateProduct product={product}/></span>} content={'Alterar produto'}/>
                             <Tooltipable trigger={<span><StockUpdateDialog product={product} onStockUpdated={() => router.refresh()}/></span>} content={'Alterar estoque'}/>
                             <Tooltipable trigger={
@@ -132,9 +132,9 @@ const getStock = (product: any) => {
 
 const StockBadge = ({stock}: { stock: number }) => {
     const getBadgeColor = () => {
-        if (stock === 0) return "bg-red-100 text-red-800";
-        if (stock < 5) return "bg-yellow-100 text-yellow-800";
-        return "bg-green-100 text-green-800";
+        if (stock === 0) return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100";
+        if (stock < 5) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100";
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
     };
 
     return (

@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Interfaces\Services\LogServiceInterface;
 use App\Models\PriceHistory;
 use App\Models\StockHistory;
 
-class LogService
+class LogService implements LogServiceInterface
 {
-    public static function recordPriceChange($productId, $newPrice)
+    public function recordPriceChange(int $productId, float $newPrice): void
     {
         PriceHistory::create([
             'product_id' => $productId,
@@ -15,7 +16,14 @@ class LogService
         ]);
     }
 
-    public static function recordStockChange($productId, $newStock, $quantityChanged, $managerId, $justification, $clothingVariantId = null)
+    public function recordStockChange(
+        int    $productId,
+        int    $newStock,
+        int    $quantityChanged,
+        ?int   $managerId,
+        string $justification,
+        ?int   $clothingVariantId = null
+    ): void
     {
         StockHistory::create([
             'product_id' => $productId,

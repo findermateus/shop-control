@@ -7,14 +7,16 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import {useLoading} from "@/providers/LoadingProvider";
 
 export default function Page() {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
-
+    const {setLoading} = useLoading();
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true);
         const response = await fetch('/api/auth/manager', {
             method: 'POST',
             headers: {
@@ -22,6 +24,7 @@ export default function Page() {
             },
             body: JSON.stringify({ login, password }),
         });
+        setLoading(false);
         if (!response.ok) {
             const data = await response.json();
             toast.error(data.error || 'Erro ao autenticar');
@@ -31,7 +34,7 @@ export default function Page() {
         router.push('/manager/stock');
     }
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="flex items-center justify-center h-screen">
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle>Logar na sua conta</CardTitle>

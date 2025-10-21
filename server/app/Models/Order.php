@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enum\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -30,9 +31,14 @@ class Order extends Model
         return $this->belongsTo(Address::class);
     }
 
-    public function orderItems()
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function orderHistories(): HasMany
+    {
+        return $this->hasMany(OrderHistory::class);
     }
 
     public function products()
