@@ -1,5 +1,3 @@
-// components/ui/sidebar-item.tsx
-
 "use client";
 
 import {usePathname, useRouter} from "next/navigation";

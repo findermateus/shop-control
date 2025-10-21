@@ -6,7 +6,6 @@ export async function POST(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Aguardar params antes de usar (Next.js 15)
     const { id } = await context.params;
     
     const body = await request.json()

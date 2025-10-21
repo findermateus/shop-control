@@ -13,7 +13,6 @@ export default function CustomerInfoCard(props: CustomerInfoCardProps) {
     const { title, icon, value, valueColor = "text-foreground", formatAsCurrency = false, subtitle } = props;
     
     const formatValue = (val: number | string) => {
-        // Verificação para undefined/null
         if (val === undefined || val === null) {
             return formatAsCurrency ? "R$ 0,00" : "0";
         }

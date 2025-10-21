@@ -154,7 +154,6 @@ export default function CustomersTable({
   };
 
   const handleEditAddress = (address: CustomerAddress, customer: Customer) => {
-    // Adicionar customer_id se não existir
     const addressWithCustomerId = {
       ...address,
       customer_id: address.customer_id || customer.id

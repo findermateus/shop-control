@@ -9,7 +9,6 @@ interface CustomerDashboardProps {
 export default function CustomerDashboard(props: CustomerDashboardProps) {
     const { stats } = props;
 
-    // Calcular quantos clientes novos tivemos nesta semana
     const getWeeklySubtitle = () => {
         if (stats.newCustomers === 0) {
             return "Nenhum novo esta semana";

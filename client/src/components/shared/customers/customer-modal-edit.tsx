@@ -52,7 +52,6 @@ export default function EditCustomerModal({
   };
 
   const formatPhoneNumber = (value: string) => {
-    // Remove tudo que não é número
     const numbers = value.replace(/\D/g, "");
     
     const limited = numbers.slice(0, 11);
@@ -81,8 +80,7 @@ export default function EditCustomerModal({
       toast.error("Email é obrigatório");
       return false;
     }
-    
-    // Validação básica de email
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error("Email inválido");
@@ -93,8 +91,7 @@ export default function EditCustomerModal({
       toast.error("Telefone é obrigatório");
       return false;
     }
-    
-    // Remove formatação para validar
+
     const phoneNumbers = formData.cellphone.replace(/\D/g, "");
     if (phoneNumbers.length < 10) {
       toast.error("Telefone deve ter pelo menos 10 dígitos");

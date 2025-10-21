@@ -55,12 +55,10 @@ export default function OrdersTable(props: OrdersTableProps) {
 
     const handleViewOrder = (orderId: number) => {
         console.log('Ver pedido:', orderId);
-        // Implementar navegação ou modal para detalhes do pedido
     };
 
     const handleUpdateStatus = (orderId: number, newStatus: ApiOrder['status']) => {
         console.log('Atualizar status do pedido:', orderId, 'para:', newStatus);
-        // Implementar atualização de status
     };
 
     return (

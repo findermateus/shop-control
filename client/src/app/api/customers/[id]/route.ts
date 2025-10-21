@@ -56,7 +56,6 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Aguardar params antes de usar
     const { id } = await context.params;
     
     const success = await deleteCustomer(id);

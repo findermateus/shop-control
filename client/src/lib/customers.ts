@@ -86,8 +86,7 @@ export async function createCustomer(
         }
 
         const result = await response.json();
-        
-        // O Laravel retorna o objeto diretamente
+
         if (result && result.id) {
             return result as Customer;
         } else {
@@ -163,8 +162,7 @@ export async function updateCustomer(
         }
 
         const result = await response.json();
-        
-        // O Laravel retorna o objeto diretamente
+
         if (result && result.id) {
             return result as Customer;
         } else {
@@ -239,8 +237,7 @@ export async function createCustomerAddress(
         }
 
         const result = await response.json();
-        
-        // O Laravel retorna o objeto diretamente ou dentro de data
+
         if (result && (result.id || result.data)) {
             return result.data || result;
         } else {

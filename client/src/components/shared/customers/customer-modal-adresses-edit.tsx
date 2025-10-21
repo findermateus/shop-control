@@ -36,7 +36,6 @@ export default function EditAddressModal({
   const [cepInitialized, setCepInitialized] = useState(false);
   const { setLoading } = useLoading();
 
-  // Preencher formulário quando address mudar
   useEffect(() => {
     if (address) {
       setFormData({
