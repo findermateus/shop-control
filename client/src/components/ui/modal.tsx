@@ -4,6 +4,7 @@ interface ModalProps {
     readonly trigger: React.ReactNode;
     readonly dialogContent: React.ReactNode;
     readonly title?: string;
+    readonly className?: string;
 }
 
 export default function Modal(props: ModalProps) {
@@ -12,7 +13,7 @@ export default function Modal(props: ModalProps) {
         <DialogTrigger asChild>
             {trigger}
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className={props.className ?? ""}>
             <DialogHeader>
                 <DialogTitle>
                     {title}

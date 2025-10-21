@@ -1,9 +1,9 @@
 import OrdersPage from "@/components/shared/orders/orders-page";
-import { mockOrders, getMockOrderStats } from "@/lib/mock-orders";
+import {getOrders} from "@/lib/orders";
+import {fetchCustomers} from "@/lib/customers";
 
-export default function Page() {
-    const orders = mockOrders;
-    const stats = getMockOrderStats();
-    
-    return <OrdersPage orders={orders} stats={stats} />;
+export default async function Page() {
+    const orders = await getOrders();
+    const customers = await fetchCustomers();
+    return <OrdersPage orders={orders} customers={customers} />;
 }

@@ -22,9 +22,10 @@ class CreateOrder
 
     private function processOrder(array $data): Order
     {
+        $orderCode = 'ORD-' . strtoupper(uniqid());
         $order = Order::create([
             'customer_id' => $data['customer_id'],
-            'order_code' => $data['order_code'],
+            'order_code' => $orderCode,
             'address_id' => $data['address_id'],
             'status' => 'pending',
             'total_amount' => 0

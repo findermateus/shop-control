@@ -2,9 +2,9 @@
 
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import {usePathname, useRouter} from "next/navigation";
+import type {ReactNode} from "react";
+import {cn} from "@/lib/utils";
 
 interface SidebarItemProps {
     readonly icon: ReactNode;
@@ -12,7 +12,7 @@ interface SidebarItemProps {
     readonly route: string;
 }
 
-export function SidebarItem({ icon, text, route }: SidebarItemProps) {
+export function SidebarItem({icon, text, route}: SidebarItemProps) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -26,13 +26,26 @@ export function SidebarItem({ icon, text, route }: SidebarItemProps) {
         <button
             onClick={handleClick}
             className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-50",
-                isActive &&
-                    "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+                "group relative flex w-full items-center gap-3 rounded-lg px-4 py-3 font-medium transition-all duration-300 ease-in-out",
+                "text-muted-foreground hover:text-foreground",
+                "hover:bg-accent/50 hover:shadow-sm",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                "active:scale-[0.98]",
+                isActive && [
+                    "bg-primary text-primary-foreground shadow-md",
+                    "hover:bg-primary hover:text-primary-foreground hover:shadow-lg",
+                    "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-8 before:w-1 before:rounded-r-full before:bg-primary-foreground/30"
+                ]
             )}
         >
-            {icon}
-            <span className="font-medium">{text}</span>
+            <span className={cn(
+                "transition-transform duration-300 ease-in-out",
+                "group-hover:scale-110",
+                isActive && "scale-110"
+            )}>
+                {icon}
+            </span>
+            <span className="truncate">{text}</span>
         </button>
     );
 }

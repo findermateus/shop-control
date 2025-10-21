@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { MapPin } from "lucide-react";
+import { useLoading } from "@/providers/LoadingProvider";
 
 interface CreateAddressModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function CreateAddressModal({
     complement: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const { setLoading } = useLoading();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -55,6 +57,53 @@ export default function CreateAddressModal({
     const formatted = formatCep(value);
     handleInputChange("postal_code", formatted);
   };
+
+  const fetchAddressByCep = async (cep: string) => {
+    const cepNumbers = cep.replace(/\D/g, "");
+
+    if (cepNumbers.length !== 8) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cepNumbers}/json/`);
+
+      if (!response.ok) {
+        throw new Error("Erro ao buscar CEP");
+      }
+
+      const data = await response.json();
+
+      if (data.erro) {
+        toast.error("CEP não encontrado");
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        street: data.logradouro || "",
+        neighborhood: data.bairro || "",
+        complement: data.complemento || prev.complement,
+      }));
+
+      toast.success("Endereço carregado com sucesso!");
+    } catch (error) {
+      console.error("Error fetching CEP:", error);
+      toast.error("Erro ao buscar CEP. Verifique o número digitado.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const cepNumbers = formData.postal_code.replace(/\D/g, "");
+
+    if (cepNumbers.length === 8) {
+      fetchAddressByCep(formData.postal_code);
+    }
+  }, [formData.postal_code]);
 
   const validateForm = () => {
     if (!formData.postal_code.trim()) {
@@ -146,18 +195,18 @@ export default function CreateAddressModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-gray-600" />
+          <DialogTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-muted-foreground" />
             Novo Endereço
           </DialogTitle>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Adicionar endereço para {customerName}
           </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="postal_code" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="postal_code" className="text-sm font-medium text-foreground">
               CEP *
             </Label>
             <Input
@@ -171,7 +220,7 @@ export default function CreateAddressModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="street" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="street" className="text-sm font-medium text-foreground">
               Rua *
             </Label>
             <Input
@@ -186,21 +235,7 @@ export default function CreateAddressModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="number" className="text-sm font-medium text-gray-700">
-                Número *
-              </Label>
-              <Input
-                id="number"
-                type="text"
-                value={formData.number}
-                onChange={(e) => handleInputChange("number", e.target.value)}
-                disabled={isLoading}
-                className="w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="neighborhood" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="neighborhood" className="text-sm font-medium text-foreground">
                 Bairro *
               </Label>
               <Input
@@ -212,10 +247,25 @@ export default function CreateAddressModal({
                 className="w-full"
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="number" className="text-sm font-medium text-foreground">
+                Número *
+              </Label>
+              <Input
+                  id="number"
+                  type="text"
+                  value={formData.number}
+                  onChange={(e) => handleInputChange("number", e.target.value)}
+                  disabled={isLoading}
+                  className="w-full"
+              />
+            </div>
+
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="complement" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="complement" className="text-sm font-medium text-foreground">
               Complemento
             </Label>
             <Input
@@ -239,7 +289,7 @@ export default function CreateAddressModal({
             </Button>
             <Button
               type="submit"
-              className="bg-black text-white hover:bg-gray-800"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={isLoading}
             >
               {isLoading ? "Criando..." : "Criar Endereço"}

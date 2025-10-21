@@ -47,6 +47,7 @@ Route::middleware('auth:manager')->prefix('/customers')->group(function () {
 
 Route::middleware('auth:manager')->prefix('/orders')->group(function () {
    Route::post('', [OrderController::class, 'createOrder']);
+   Route::get('', [OrderController::class, 'getAllOrders']);
 });
 
 Route::post('/criar-pagamento', [MercadoPagoController::class, 'criarPagamento']);

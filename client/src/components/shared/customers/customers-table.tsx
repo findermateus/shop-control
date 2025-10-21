@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import {useState, useMemo, Fragment} from "react";
 import { Customer } from "@/lib/types/customers";
 import {
   Table,
@@ -17,6 +17,16 @@ import EditCustomerModal from "@/components/shared/customers/customer-modal-edit
 import CreateAddressModal from "@/components/shared/customers/customer-modal-adresses";
 import EditAddressModal from "@/components/shared/customers/customer-modal-adresses-edit";
 import { CustomerAddress } from "@/lib/types/customers";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface CustomersTableProps {
   customers: Customer[];
@@ -39,14 +49,14 @@ export default function CustomersTable({
   const [isEditAddressModalOpen, setIsEditAddressModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<CustomerAddress | null>(null);
 
+  const [deleteCustomerDialog, setDeleteCustomerDialog] = useState<{ isOpen: boolean; customerId: number | null }>({ isOpen: false, customerId: null });
+  const [deleteAddressDialog, setDeleteAddressDialog] = useState<{ isOpen: boolean; addressId: number | null; customerId: number | null }>({ isOpen: false, addressId: null, customerId: null });
+
   const filteredCustomers = useMemo(() => {
     return customers.filter((customer) => {
-      const matchesSearch =
-        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      return customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.cellphone.includes(searchTerm);
-
-      return matchesSearch;
     });
   }, [customers, searchTerm]);
 
@@ -56,14 +66,14 @@ export default function CustomersTable({
 
   const getAvatarColor = (name: string) => {
     const colors = [
-      "bg-red-500",
-      "bg-blue-500",
-      "bg-green-500",
-      "bg-purple-500",
-      "bg-orange-500",
-      "bg-pink-500",
-      "bg-indigo-500",
-      "bg-teal-500",
+      "bg-destructive",
+      "bg-primary",
+      "bg-chart-1",
+      "bg-chart-2",
+      "bg-chart-3",
+      "bg-chart-4",
+      "bg-chart-5",
+      "bg-accent",
     ];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
@@ -75,16 +85,16 @@ export default function CustomersTable({
       if (address.neighborhood && address.street) {
         return `${address.neighborhood}, ${address.street}`;
       }
-      
+
       if (address.street) {
         return address.street;
       }
-      
+
       if (address.neighborhood) {
         return address.neighborhood;
       }
     }
-    
+
     return "Endereço não cadastrado";
   };
 
@@ -95,7 +105,7 @@ export default function CustomersTable({
         return address.postal_code;
       }
     }
-    
+
     return "Não cadastrado";
   };
 
@@ -161,10 +171,6 @@ export default function CustomersTable({
   };
 
   const handleDeleteAddress = async (addressId: number, customerId: number) => {
-    if (!confirm("Tem certeza que deseja excluir este endereço?")) {
-      return;
-    }
-
     setDeletingAddress(addressId);
 
     try {
@@ -187,10 +193,6 @@ export default function CustomersTable({
   };
 
   const handleDeleteCustomer = async (customerId: number) => {
-    if (!confirm("Tem certeza que deseja excluir este cliente?")) {
-      return;
-    }
-
     setDeletingCustomer(customerId);
 
     try {
@@ -214,52 +216,50 @@ export default function CustomersTable({
 
   return (
     <>
-      <div className="bg-white rounded-lg border border-gray-200">
+      <div className="bg-card rounded-lg border border-border">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-gray-200">
-              <TableHead className="text-center font-medium text-gray-700">
+            <TableRow className="border-b border-border">
+              <TableHead className="text-center font-medium text-muted-foreground">
                 Cliente
               </TableHead>
-              <TableHead className="text-center font-medium text-gray-700">
+              <TableHead className="text-center font-medium text-muted-foreground">
                 Localização
               </TableHead>
-              <TableHead className="text-center font-medium text-gray-700">
+              <TableHead className="text-center font-medium text-muted-foreground">
                 CEP
               </TableHead>
-              <TableHead className="text-center font-medium text-gray-700">
+              <TableHead className="text-center font-medium text-muted-foreground">
                 Telefone
               </TableHead>
-              <TableHead className="text-center font-medium text-gray-700">
+              <TableHead className="text-center font-medium text-muted-foreground">
                 Data Cadastro
               </TableHead>
-              <TableHead className="text-center font-medium text-gray-700">
+              <TableHead className="text-center font-medium text-muted-foreground">
                 Ações
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredCustomers.map((customer) => (
-              <>
-                {/* Linha principal do cliente */}
+              <Fragment key={customer.id}>
                 <TableRow
-                  key={`customer-${customer.id}`}
-                  className="border-b border-gray-100 hover:bg-gray-50"
+                  className="border-b border-border hover:bg-muted/50"
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-10 h-10 rounded-full ${getAvatarColor(
                           customer.name
-                        )} flex items-center justify-center text-white font-medium text-sm`}
+                        )} flex items-center justify-center text-primary-foreground font-medium text-sm`}
                       >
                         {getCustomerInitials(customer.name)}
                       </div>
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-foreground">
                           {customer.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           {customer.email}
                         </div>
                       </div>
@@ -267,78 +267,76 @@ export default function CustomersTable({
                   </TableCell>
 
                   <TableCell className="text-center">
-                    <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
                       <span>{getPrimaryAddress(customer)}</span>
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-center text-sm text-gray-600">
+                  <TableCell className="text-center text-sm text-muted-foreground">
                     {getPrimaryCep(customer)}
                   </TableCell>
 
-                  <TableCell className="text-center text-sm text-gray-600">
+                  <TableCell className="text-center text-sm text-muted-foreground">
                     {formatPhone(customer.cellphone)}
                   </TableCell>
 
-                  <TableCell className="text-center text-sm text-gray-600">
+                  <TableCell className="text-center text-sm text-muted-foreground">
                     {formatDate(customer.created_at)}
                   </TableCell>
 
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         className="h-8 w-8 p-0"
                         onClick={() => handleToggleAddresses(customer.id)}
                         title="Ver endereços"
                       >
                         {expandedCustomer === customer.id ? (
-                          <ChevronUp className="h-4 w-4 text-gray-500" />
+                          <ChevronUp className="h-4 w-4 text-muted-foreground" />
                         ) : (
-                          <ChevronDown className="h-4 w-4 text-gray-500" />
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
                         )}
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => handleEditCustomer(customer)}
-                        title="Editar cliente"
-                      >
-                        <Edit className="h-4 w-4 text-gray-500" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0"
-                        onClick={() => handleDeleteCustomer(customer.id)}
-                        disabled={deletingCustomer === customer.id}
+                        onClick={() => handleEditCustomer(customer)}
+                        title="Editar cliente"
+                      >
+                        <Edit className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => setDeleteCustomerDialog({ isOpen: true, customerId: customer.id } )}
                         title="Excluir cliente"
                       >
-                        <Trash2 className="h-4 w-4 text-gray-500" />
+                        <Trash2 className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
 
-                {/* Linha expandida com endereços */}
                 {expandedCustomer === customer.id && (
-                  <TableRow key={`addresses-${customer.id}`} className="bg-gray-50">
+                  <TableRow key={`addresses-${customer.id}`} className="bg-muted/30">
                     <TableCell colSpan={6} className="p-6">
                       <div className="space-y-4">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-2">
-                            <MapPin className="h-5 w-5 text-gray-600" />
-                            <h4 className="font-semibold text-gray-900">
+                            <MapPin className="h-5 w-5 text-muted-foreground" />
+                            <h4 className="font-semibold text-foreground">
                               Endereços de {customer.name}
                             </h4>
                           </div>
                           <Button
                             onClick={() => handleAddAddress(customer)}
                             size="sm"
-                            className="bg-black text-white hover:bg-gray-800"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
                           >
                             <Plus className="h-4 w-4 mr-2" />
                             Adicionar Endereço
@@ -350,10 +348,10 @@ export default function CustomersTable({
                             {customer.addresses.map((address, index) => (
                               <div
                                 key={`address-${address.id}`}
-                                className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
+                                className="bg-card p-4 rounded-lg border border-border shadow-sm"
                               >
                                 <div className="flex items-center justify-between mb-2">
-                                  <span className="text-sm font-medium text-gray-900">
+                                  <span className="text-sm font-medium text-foreground">
                                     Endereço {index + 1}
                                   </span>
                                   <div className="flex items-center gap-1">
@@ -364,42 +362,42 @@ export default function CustomersTable({
                                       onClick={() => handleEditAddress(address, customer)}
                                       title="Editar endereço"
                                     >
-                                      <Edit className="h-3 w-3 text-gray-500" />
+                                      <Edit className="h-3 w-3 text-muted-foreground" />
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="sm"
                                       className="h-6 w-6 p-0"
-                                      onClick={() => handleDeleteAddress(address.id, customer.id)}
+                                      onClick={() => setDeleteAddressDialog({ isOpen: true, addressId: address.id, customerId: customer.id })}
                                       disabled={deletingAddress === address.id}
                                       title="Excluir endereço"
                                     >
-                                      <Trash2 className="h-3 w-3 text-gray-500" />
+                                      <Trash2 className="h-3 w-3 text-muted-foreground" />
                                     </Button>
                                   </div>
                                 </div>
 
-                                <div className="space-y-2 text-sm text-gray-600">
+                                <div className="space-y-2 text-sm text-muted-foreground">
                                   <div className="flex justify-between">
                                     <span className="font-medium">CEP:</span>
                                     <span>{formatCep(address.postal_code)}</span>
                                   </div>
-                                  
+
                                   <div className="flex justify-between">
                                     <span className="font-medium">Rua:</span>
                                     <span className="text-right">{address.street}</span>
                                   </div>
-                                  
+
                                   <div className="flex justify-between">
                                     <span className="font-medium">Número:</span>
                                     <span>{address.number}</span>
                                   </div>
-                                  
+
                                   <div className="flex justify-between">
                                     <span className="font-medium">Bairro:</span>
                                     <span>{address.neighborhood}</span>
                                   </div>
-                                  
+
                                   {address.complement && (
                                     <div className="flex justify-between">
                                       <span className="font-medium">Complemento:</span>
@@ -408,7 +406,7 @@ export default function CustomersTable({
                                   )}
 
                                   {address.created_at && (
-                                    <div className="flex justify-between pt-2 border-t border-gray-100">
+                                    <div className="flex justify-between pt-2 border-t border-border">
                                       <span className="font-medium">Cadastrado em:</span>
                                       <span>{formatDate(address.created_at)}</span>
                                     </div>
@@ -419,11 +417,11 @@ export default function CustomersTable({
                           </div>
                         ) : (
                           <div className="text-center py-8">
-                            <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500 font-medium">
+                            <MapPin className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+                            <p className="text-muted-foreground font-medium">
                               Nenhum endereço cadastrado
                             </p>
-                            <p className="text-sm text-gray-400 mt-1">
+                            <p className="text-sm text-muted-foreground/70 mt-1">
                               Este cliente ainda não possui endereços cadastrados
                             </p>
                           </div>
@@ -432,19 +430,18 @@ export default function CustomersTable({
                     </TableCell>
                   </TableRow>
                 )}
-              </>
+              </Fragment>
             ))}
           </TableBody>
         </Table>
 
         {filteredCustomers.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             Nenhum cliente encontrado
           </div>
         )}
       </div>
 
-      {/* Modal de edição de cliente */}
       <EditCustomerModal
         isOpen={isEditModalOpen}
         customer={selectedCustomer}
@@ -452,7 +449,6 @@ export default function CustomersTable({
         onCustomerUpdated={onCustomerUpdated}
       />
 
-      {/* Modal de adicionar endereço */}
       <CreateAddressModal
         isOpen={isAddressModalOpen}
         customerId={selectedCustomerForAddress?.id || null}
@@ -461,7 +457,6 @@ export default function CustomersTable({
         onAddressCreated={onCustomerUpdated}
       />
 
-      {/* Modal de editar endereço */}
       <EditAddressModal
         isOpen={isEditAddressModalOpen}
         address={selectedAddress}
@@ -469,6 +464,54 @@ export default function CustomersTable({
         onClose={handleCloseEditAddressModal}
         onAddressUpdated={onCustomerUpdated}
       />
+
+      <AlertDialog open={deleteCustomerDialog.isOpen} onOpenChange={(open) => { if (!open) setDeleteCustomerDialog({ isOpen: false, customerId: null }); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Cliente</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteCustomerDialog({ isOpen: false, customerId: null })}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteCustomerDialog.customerId !== null) {
+                  handleDeleteCustomer(deleteCustomerDialog.customerId);
+                }
+                setDeleteCustomerDialog({ isOpen: false, customerId: null });
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteAddressDialog.isOpen} onOpenChange={(open) => { if (!open) setDeleteAddressDialog({ isOpen: false, addressId: null, customerId: null }); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Endereço</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este endereço? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAddressDialog({ isOpen: false, addressId: null, customerId: null })}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteAddressDialog.addressId !== null && deleteAddressDialog.customerId !== null) {
+                  handleDeleteAddress(deleteAddressDialog.addressId, deleteAddressDialog.customerId);
+                }
+                setDeleteAddressDialog({ isOpen: false, addressId: null, customerId: null });
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

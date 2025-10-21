@@ -104,12 +104,15 @@ class ProductController extends Controller
     public function updateProductStock(int $id, UpdateProductStockRequest $request)
     {
         $product = Product::find($id);
+
         if (!$product) {
             throw new ProductNotFoundException();
         }
+
         $data = $request->validated();
         $value = $data['value'];
         $clothingVariantId = $data['clothingVariantId'] ?? null;
+
         if (is_numeric($clothingVariantId)) {
             $variant = $product->clothesVariants()->where('id', $data['clothingVariantId'])->firstOrFail();
             $variant->stock += $value;
@@ -120,6 +123,7 @@ class ProductController extends Controller
             $product->save();
             LogService::recordStockChange($product->id, $product->stock, $value, auth()->id(), 'Stock changed via manager panel');
         }
+
         return response()->json(['message' => 'Product stock updated successfully']);
     }
 }

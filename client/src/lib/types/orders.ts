@@ -6,7 +6,7 @@ export interface OrderItem {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
-    variant?: string; // Para roupas que podem ter tamanhos/cores
+    variant?: string;
 }
 
 export interface Order {
@@ -44,4 +44,36 @@ export interface OrderStats {
     cancelledOrders: number;
     totalRevenue: number;
     averageOrderValue: number;
+}
+
+export interface ApiProduct {
+    id: number;
+    label: string;
+}
+
+export interface ApiOrderItem {
+    id: number;
+    order_id: number;
+    product_id: number;
+    quantity: number;
+    unit_price: string;
+    total_price: string;
+    product?: ApiProduct | null;
+}
+
+export interface ApiCustomer {
+    id: number;
+    name: string;
+    email: string;
+}
+
+export interface ApiOrder {
+    id: number;
+    order_code?: string;
+    customer_id?: number;
+    customer?: ApiCustomer | null;
+    status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | string;
+    total_amount: string;
+    created_at: string;
+    order_items: ApiOrderItem[];
 }
