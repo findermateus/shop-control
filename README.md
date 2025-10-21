@@ -1,8 +1,6 @@
-# E-commerce Esquina Geek
-
-# Jira
-
-Acesse o [Jira](https://e-commerce-esquina-geek.atlassian.net/jira/software/projects/DEV/boards/1) para acompanhar a atribuição e execução das atividades, bem como consultar as especificações funcionais e não funcionais do sistema.
+# Shop Control
+O Shop Control é um sistema de gestão comercial desenvolvido para facilitar o controle de produtos, estoques, preços, clientes e pedidos.
+Seu objetivo é centralizar as operações de uma loja em um único ambiente, permitindo uma administração mais eficiente e organizada.
 
 # Modelos
 
@@ -118,15 +116,9 @@ O frontend é uma aplicação Next.js.
 
 Por padrão, os usuários administradores (`managers`) não podem ser registrados pela interface pública. A criação deve ser feita manualmente no banco de dados.
 
-1.  **Gere o Hash da Senha:**
-    Para garantir que a senha seja armazenada de forma segura, utilize o endpoint `POST /password` para gerar um hash.
-    * **Método:** `POST`
-    * **URL:** `http://localhost:8080/api/password`
-    * **Body (JSON):**
-        ```json
-        {
-          "password": "uma_senha_forte_123"
-        }
-        ```
-2.  **Insira o Usuário no Banco:**
-    Use um cliente de banco de dados (como DBeaver, TablePlus ou o terminal) para se conectar ao banco e inserir um novo registro na tabela `managers`, utilizando o hash gerado no passo anterior para o campo `password`.
+1.  **Gere um manager padrão:**
+    Entre no container 'workspace' e execute o comando artisan
+2. ```bash
+   php artisan app:generate-default-user
+2.  **Realize o login:**
+    Após executar o comando, você poderá utilizar o usuário padrão com login 'admin' e senha 'password'.
