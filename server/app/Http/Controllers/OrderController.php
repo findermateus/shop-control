@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrderRequest;
 use App\Http\Resources\OrderResource;
-use App\UseCases\CreateOrder;
-use App\UseCases\GetAllOrders;
+use App\UseCases\Order\CreateOrder;
+use App\UseCases\Order\GetAllOrders;
 
 class OrderController extends Controller
 {

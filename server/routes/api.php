@@ -5,7 +5,6 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\MercadoPagoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,8 +45,6 @@ Route::middleware('auth:manager')->prefix('/customers')->group(function () {
 });
 
 Route::middleware('auth:manager')->prefix('/orders')->group(function () {
-   Route::post('', [OrderController::class, 'createOrder']);
-   Route::get('', [OrderController::class, 'getAllOrders']);
+    Route::post('', [OrderController::class, 'createOrder']);
+    Route::get('', [OrderController::class, 'getAllOrders']);
 });
-
-Route::post('/criar-pagamento', [MercadoPagoController::class, 'criarPagamento']);

@@ -3,23 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginManagerRequest;
-use App\Models\Manager;
+use App\UseCases\Manager\Authenticate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class ManagerController extends Controller
 {
+    public function __construct(private readonly Authenticate $authenticate)
+    {
+    }
+
     public function authenticate(LoginManagerRequest $request)
     {
-        $manager = Manager::where('login', $request->login)->first();
-        if (! $manager || ! Hash::check($request->password, $manager->password)) {
-            throw ValidationException::withMessages([
-                'error' => ['The provided credentials are incorrect.'],
-            ]);
-        }
+        $data = $request->validated();
+        $token = $this->authenticate->execute($data['login'], $data['password']);
+
         return [
-            'token' => $manager->createToken('manager')->plainTextToken
+            'token' => $token
         ];
     }
 
