@@ -16,6 +16,8 @@ import {Label} from "@/components/ui/label";
 import {Badge} from "@/components/ui/badge";
 import {formatCurrency} from "@/hooks/use-currency";
 import {Card} from "@/components/ui/card";
+import {toast} from "sonner";
+import {useRouter} from "next/navigation";
 
 interface ClothesVariant {
     id: number;
@@ -69,12 +71,14 @@ interface DialogContentProps {
 }
 
 const DialogContent = ({customers, products}: DialogContentProps) => {
+    const router = useRouter();
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
     const [selectedProductId, setSelectedProductId] = useState<string>("");
     const [selectedVariantId, setSelectedVariantId] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [orderProducts, setOrderProducts] = useState<OrderProduct[]>([]);
+    const [isCreating, setIsCreating] = useState<boolean>(false);
 
     const selectedCustomer = useMemo(() => {
         return customers.find(customer => String(customer.id) === selectedCustomerId);
@@ -156,12 +160,58 @@ const DialogContent = ({customers, products}: DialogContentProps) => {
         setOrderProducts(orderProducts.filter((_, i) => i !== index));
     };
 
-    const handleCreateOrder = () => {
-        console.log('Criar pedido');
-        console.log('Cliente ID:', selectedCustomerId);
-        console.log('Endereço ID:', selectedAddressId);
-        console.log('Produtos:', orderProducts);
-        console.log('Total:', orderTotal);
+    const handleCreateOrder = async () => {
+        if (!selectedCustomerId || !selectedAddressId || orderProducts.length === 0) {
+            toast.error("Preencha todos os campos obrigatórios");
+            return;
+        }
+
+        setIsCreating(true);
+
+        try {
+            const productsPayload = orderProducts.map(product => ({
+                product_id: product.productId,
+                clothes_variant_id: product.variantId ?? null,
+                quantity: product.quantity
+            }));
+
+            const payload = {
+                customer_id: parseInt(selectedCustomerId),
+                address_id: parseInt(selectedAddressId),
+                products: productsPayload
+            };
+
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                toast.error(data.message || "Erro ao criar pedido");
+                return;
+            }
+
+            toast.success("Pedido criado com sucesso!");
+
+            setSelectedCustomerId("");
+            setSelectedAddressId("");
+            setSelectedProductId("");
+            setSelectedVariantId("");
+            setQuantity(1);
+            setOrderProducts([]);
+
+            router.refresh();
+        } catch (error) {
+            console.error('Error creating order:', error);
+            toast.error("Erro ao conectar com o servidor");
+        } finally {
+            setIsCreating(false);
+        }
     };
 
     return (
@@ -421,10 +471,29 @@ const DialogContent = ({customers, products}: DialogContentProps) => {
             <div className="flex gap-2 justify-end pt-4 border-t my-4 mr-2">
                 <Button
                     onClick={handleCreateOrder}
-                    disabled={!selectedCustomerId || !selectedAddressId || orderProducts.length === 0}
+                    disabled={!selectedCustomerId || !selectedAddressId || orderProducts.length === 0 || isCreating}
                     className="w-full sm:w-auto"
                 >
-                    Criar Pedido
+                    {isCreating ? (
+                        <>
+                            <svg
+                                className="w-4 h-4 animate-spin"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                />
+                            </svg>
+                            Criando...
+                        </>
+                    ) : (
+                        "Criar Pedido"
+                    )}
                 </Button>
             </div>
         </div>
