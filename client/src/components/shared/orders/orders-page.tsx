@@ -13,9 +13,26 @@ import OrderCreateDialog from "@/components/shared/orders/order-create-dialog";
 import {getStoreName} from "@/lib/client-utils";
 import {Customer} from "@/lib/types/customers";
 
+interface AvailableProduct {
+    id: number;
+    label: string;
+    description: string;
+    category: string;
+    price: string;
+    discount: number;
+    stock: number | null;
+    active: number;
+    clothesVariants?: {
+        id: number;
+        size: string;
+        stock: number;
+    }[];
+}
+
 interface OrdersPageProps {
     readonly orders: Array<ApiOrder>;
-    readonly customers: Array<Customer>
+    readonly customers: Array<Customer>;
+    readonly products: Array<AvailableProduct>;
 }
 
 export default function OrdersPage(props: OrdersPageProps) {
@@ -47,7 +64,7 @@ export default function OrdersPage(props: OrdersPageProps) {
                 <div className="flex flex-col gap-5">
                     <div className="flex items-center justify-between">
                         <FilterTitle/>
-                        <OrderCreateDialog customers={props.customers} trigger={<Button><Plus/> Novo Pedido</Button>}/>
+                        <OrderCreateDialog customers={props.customers} products={props.products} trigger={<Button><Plus/> Novo Pedido</Button>}/>
                     </div>
                     <div className="flex gap-4">
                         <div className="relative flex-1">

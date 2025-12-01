@@ -2,6 +2,49 @@ import { getAuthorizationToken } from "./auth.server";
 import { Product } from "./types/stock";
 import { getServerUrl } from "./utils";
 
+interface AvailableProduct {
+    id: number;
+    label: string;
+    description: string;
+    category: string;
+    price: string;
+    discount: number;
+    stock: number | null;
+    active: number;
+    clothesVariants?: {
+        id: number;
+        size: string;
+        stock: number;
+    }[];
+}
+
+export async function fetchAvailableProducts(): Promise<Array<AvailableProduct>> {
+    const token = await getAuthorizationToken();
+    const url = getServerUrl() + "/products/stock/available";
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (!response.ok) {
+            const data = await response.json();
+            console.error(
+                "Error fetching available products:",
+                data.message || "Erro ao buscar produtos disponíveis"
+            );
+            throw new Error("Erro ao buscar produtos disponíveis");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error:", error);
+        return [];
+    }
+}
+
 export async function fetchProducts(): Promise<Array<Product>> {
     const token = await getAuthorizationToken();
     const url = getServerUrl() + "/products";

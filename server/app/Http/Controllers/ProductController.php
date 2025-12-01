@@ -11,16 +11,18 @@ use App\UseCases\Product\ChangeProductPrice;
 use App\UseCases\Product\ChangeProductStatus;
 use App\UseCases\Product\ChangeProductStock;
 use App\UseCases\Product\CreateProduct;
+use App\UseCases\Product\GetProductsWithStock;
 use App\UseCases\Product\UpdateProduct;
 
 class ProductController extends Controller
 {
     public function __construct(
-        private readonly CreateProduct       $createProduct,
-        private readonly UpdateProduct       $updateProduct,
-        private readonly ChangeProductStatus $changeProductStatus,
-        private readonly ChangeProductPrice  $changeProductPrice,
-        private readonly ChangeProductStock  $changeProductStock
+        private readonly CreateProduct        $createProduct,
+        private readonly UpdateProduct        $updateProduct,
+        private readonly ChangeProductStatus  $changeProductStatus,
+        private readonly ChangeProductPrice   $changeProductPrice,
+        private readonly ChangeProductStock   $changeProductStock,
+        private readonly GetProductsWithStock $getProductsWithStock
     )
     {
     }
@@ -43,6 +45,13 @@ class ProductController extends Controller
     public function getProducts()
     {
         return response()->json(Product::all());
+    }
+
+    public function getProductsWithStock()
+    {
+        $productsWithStock = $this->getProductsWithStock->execute();
+
+        return response()->json($productsWithStock);
     }
 
     public function getProductById(int $id)
