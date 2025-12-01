@@ -116,10 +116,10 @@ export default async function NotFound() {
                                     <Link href="/manager/customers">Clientes</Link>
                                 </Button>
                                 <Button asChild variant="ghost" size="sm">
-                                    <Link href="/manager/orders">Pedidos</Link>
+                                    <Link href="/manager/stock">Estoque</Link>
                                 </Button>
                                 <Button asChild variant="ghost" size="sm">
-                                    <Link href="/manager/stock">Estoque</Link>
+                                    <Link href="/manager/orders">Pedidos</Link>
                                 </Button>
                             </div>
                         </div>

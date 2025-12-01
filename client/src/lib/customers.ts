@@ -296,7 +296,7 @@ export async function updateCustomerAddress(
     }
 }
 
-export async function deleteCustomerAddress(addressId: number | string): Promise<boolean> {
+export async function deleteCustomerAddress(addressId: number | string): Promise<boolean | string> {
     try {
         const token = await getAuthorizationToken();
         
@@ -317,9 +317,10 @@ export async function deleteCustomerAddress(addressId: number | string): Promise
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
+            const errorData = await response.json();
+            const errorText = errorData.message || "Erro ao excluir endereço";
             console.error("Erro ao excluir endereço:", errorText);
-            return false;
+            return errorText;
         }
 
         return true;

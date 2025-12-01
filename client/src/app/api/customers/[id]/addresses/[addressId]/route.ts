@@ -75,7 +75,14 @@ export async function DELETE(
       )
     }
 
-    return NextResponse.json({ success: true })
+    if (success === true) {
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json(
+      { error: success },
+      { status: 500 }
+    );
   } catch (error) {
     console.error('Error deleting address:', error)
     return NextResponse.json(

@@ -64,14 +64,14 @@ export function AppSidebar() {
                         route="/manager/stock"
                     />
                     <SidebarItem
-                        icon={<ShoppingCart className="h-5 w-5" />}
-                        text="Pedidos"
-                        route="/manager/orders"
-                    />
-                    <SidebarItem
                         icon={<Users className="h-5 w-5" />}
                         text="Clientes"
                         route="/manager/customers"
+                    />
+                    <SidebarItem
+                        icon={<ShoppingCart className="h-5 w-5" />}
+                        text="Pedidos"
+                        route="/manager/orders"
                     />
                 </nav>
                 <SidebarGroup />

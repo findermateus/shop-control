@@ -178,7 +178,11 @@ export default function CustomersTable({
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao excluir endereço");
+        const data = await response.json();
+        const errorMessage = data.error || "Erro ao excluir endereço";
+        console.error("Error deleting address:", errorMessage);
+        toast.error(errorMessage);
+        return;
       }
 
       toast.success("Endereço excluído com sucesso!");
